@@ -1,0 +1,1958 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="pha.com.code.report.dao.MedicalSalesDataMapper">
+	<resultMap id="BaseResultMap" type="pha.com.code.report.model.MedicalSalesData">
+		<id column="salesid" property="salesid" jdbcType="INTEGER" />
+		<result column="sales_value" property="salesValue" jdbcType="DECIMAL" />
+		<result column="unit" property="unit" jdbcType="INTEGER" />
+		<result column="descinfo" property="descinfo" jdbcType="NVARCHAR" />
+		<result column="manutypeid" property="manutypeid" jdbcType="INTEGER" />
+		<result column="interatc1id" property="interatc1id" jdbcType="INTEGER" />
+		<result column="interatc2id" property="interatc2id" jdbcType="INTEGER" />
+		<result column="interatc3id" property="interatc3id" jdbcType="INTEGER" />
+		<result column="manuid" property="manuid" jdbcType="INTEGER" />
+		<result column="genericnameid" property="genericnameid" jdbcType="INTEGER" />
+		<result column="productnameid" property="productnameid" jdbcType="INTEGER" />
+		<result column="dosageformid" property="dosageformid" jdbcType="INTEGER" />
+		<result column="specificationsid" property="specificationsid" jdbcType="INTEGER" />
+		<result column="packagingid" property="packagingid" jdbcType="INTEGER" />
+		<result column="cwmedicineid" property="cwmedicineid" jdbcType="INTEGER" />
+		<result column="proviceid" property="proviceid" jdbcType="INTEGER" />
+		<result column="minimumunitid" property="minimumunitid" jdbcType="INTEGER" />
+		<result column="sales_date" property="salesDate" jdbcType="NVARCHAR" />
+		<result column="sales_year" property="salesYear" jdbcType="NVARCHAR" />
+		<result column="sales_month" property="salesMonth" jdbcType="NVARCHAR" />
+		<result column="datarole" property="datarole" jdbcType="NVARCHAR" />
+		<result column="databaseid" property="databaseid" jdbcType="INTEGER" />
+		<!-- 新增接收计算增长率的属性 -->
+		<result column="value" property="value" jdbcType="DECIMAL" />
+		<!-- 新增接收占比的属性 -->
+		<result column="provincename" property="provincename" jdbcType="NVARCHAR" />
+		<result column="zb" property="zb" jdbcType="DECIMAL" />
+	</resultMap>
+
+	<resultMap id="BaseResultMap3" type="pha.com.code.report.model.MedicalSalesData">
+		<result column="yearCounts" property="yearCounts" jdbcType="INTEGER" />
+	</resultMap>
+
+	<resultMap id="BaseResultMap4" type="pha.com.code.report.model.ManuType">
+		<result column="hezi" property="hezi" jdbcType="NVARCHAR" />
+		<result column="neizi" property="neizi" jdbcType="NVARCHAR" />
+		<result column="hzwzxse" property="hzwzxse" jdbcType="NVARCHAR" />
+		<result column="nzxse" property="nzxse" jdbcType="NVARCHAR" />
+		<result column="xsezb" property="xsezb" jdbcType="NVARCHAR" />
+		<result column="xse" property="xse" jdbcType="NVARCHAR" />
+		<result column="time" property="time" jdbcType="NVARCHAR" />
+		<result column="manuName" property="manuName" jdbcType="NVARCHAR" />
+		<result column="manuTypeName" property="manuTypeName" jdbcType="NVARCHAR" />
+		<result column="name" property="name" jdbcType="NVARCHAR"/>
+	</resultMap>
+	
+	<resultMap id="BaseResultMap5" type="pha.com.code.report.model.ListDataOne">
+		<result column="sales_year" property="year" jdbcType="INTEGER" />
+		<result column="lastyear" property="lastyear" jdbcType="INTEGER" />
+		<result column="manuname_ch" property="manunameCh" jdbcType="NVARCHAR" />
+		<result column="manutypename" property="manuType" jdbcType="NVARCHAR" />
+		<result column="minimumCount" property="minimumCount" jdbcType="INTEGER" />
+		<result column="lastscfezb" property="lastscfezb" jdbcType="DECIMAL" />
+		<result column="xsezzl" property="xsezzl" jdbcType="DECIMAL" />
+		<result column="fristyear" property="fristyear" jdbcType="INTEGER" />
+		<result column="fristscfezb" property="fristscfezb" jdbcType="DECIMAL" />
+		<result column="middleyear" property="middleyear" jdbcType="INTEGER" />
+		<result column="middlescfezb" property="middlescfezb" jdbcType="DECIMAL" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		salesid, sales_value, unit, descinfo, manutypeid, interatc1id, interatc2id, interatc3id ,manuid,
+		genericnameid, productnameid, dosageformid, specificationsid, packagingid,
+		cwmedicineid,proviceid, minimumunitid, sales_date, sales_year, sales_month,
+		datarole,databaseid
+	</sql>
+
+	<cache type="org.mybatis.caches.ehcache.LoggingEhcache"/> 
+	<!-- 查询用户选择年份进行搜索的时候是否使用MAT的方式 -->
+	<select id="selectByQueryIsMAT" resultType="java.lang.Integer" parameterType="java.util.Map" useCache="false">
+		select COUNT(1) monthCounts from (
+		select sales_month from
+		medicalsalesdata a
+			left join manufacturertypeinfo c on a.manutypeid = c.manutypeid
+			left join manufacturerinfo d on a.manuid = d.manuid
+			left join province e on a.proviceid = e.provinceid
+			left join productnameinfo f on a.productnameid = f.productnameid
+			left join dosageforminfo g on a.dosageformid = g.dosageformid
+			left join specificationsinfo h on a.specificationsid = h.specificationsid
+			left join packaginginfo i on a.packagingid = i.packagingid
+			left join minimumunit j on a.minimumunitid = j.minimum_unit_id
+			left join genericnameinfo k on a.genericnameid = k.genericnameid
+			left join internationalatc1info l on a.interatc1id = l.interatc1id
+			left join internationalatc2info m on a.interatc2id = m.interatc2id
+			left join internationalatc3info n on a.interatc3id = n.interatc3id
+		<where>
+			<trim suffixOverrides="AND | OR" prefix="1=1">
+				<if test="year != null and year != ''">
+					AND a.sales_year = #{year,jdbcType=INTEGER}
+				</if>
+				<if test="codeid != null and codeid != ''">
+					<choose>
+						<when test="atcType != null and atcType == 1">
+							AND l.interatc1id = #{codeid,jdbcType=INTEGER}
+						</when>
+						<when test="atcType != null and atcType == 2">
+							AND a.interatc2id = #{codeid,jdbcType=INTEGER}
+						</when>
+						<when test="atcType != null and atcType == 3">
+							AND a.interatc3id = #{codeid,jdbcType=INTEGER}
+						</when>
+						<when test="atcType != null and atcType == 4">
+							AND a.genericnameid = #{codeid,jdbcType=INTEGER}
+						</when>
+					</choose>
+				</if>
+				<if test="interatc2parentcode != null and interatc2parentcode != ''">
+					AND m.parentcode = #{interatc2parentcode,jdbcType=NVARCHAR}
+				</if>
+				<if test="interatc3parentcode != null and interatc3parentcode != ''">
+					AND n.parentcode = #{interatc3parentcode,jdbcType=NVARCHAR}
+				</if>
+				<if test="genericnameparentcode != null and genericnameparentcode != ''">
+					AND k.parentcode = #{genericnameparentcode,jdbcType=NVARCHAR}
+				</if>
+				<if test="manuid != null and manuid != ''">
+					AND a.manuid = #{manuid,jdbcType=INTEGER}
+				</if>
+				<if test="manutypeid != null and manutypeid != ''">
+					AND a.manutypeid = #{manutypeid,jdbcType=INTEGER}
+				</if>
+				<if test="provinceid != null and provinceid != ''">
+					AND a.provinceid = #{provinceid,jdbcType=INTEGER}
+				</if>
+				<if test="productnameid != null and productnameid != ''">
+					AND a.productnameid = #{productnameid,jdbcType=INTEGER}
+				</if>
+				<if test="dosageformid != null and dosageformid != ''">
+					AND a.dosageformid = #{dosageformid,jdbcType=INTEGER}
+				</if>
+				<if test="specificationsid != null and specificationsid != ''">
+					AND a.specificationsid = #{specificationsid,jdbcType=INTEGER}
+				</if>
+				<if test="packagingid != null and yepackagingidar != ''">
+					AND a.packagingid = #{packagingid,jdbcType=INTEGER}
+				</if>
+				<if test="minimumunitid != null and minimumunitid != ''">
+					AND a.minimum_unit_id = #{minimumunitid,jdbcType=INTEGER}
+				</if>
+			</trim>
+		</where>
+		<trim prefix="group by">
+			sales_month
+		</trim>
+		) tb
+	</select>
+	<!-- 查询用户选择年份进行搜索的时候是否使用MAT的方式 -->
+	<select id="selectByQueryYearIsNULL" resultType="java.lang.Integer" parameterType="java.util.Map" useCache="false">
+		select COUNT(1) monthCounts from (
+		select sales_month from
+		medicalsalesdata a
+			left join manufacturertypeinfo c on a.manutypeid = c.manutypeid
+			left join manufacturerinfo d on a.manuid = d.manuid
+			left join province e on a.proviceid = e.provinceid
+			left join productnameinfo f on a.productnameid = f.productnameid
+			left join dosageforminfo g on a.dosageformid = g.dosageformid
+			left join specificationsinfo h on a.specificationsid = h.specificationsid
+			left join packaginginfo i on a.packagingid = i.packagingid
+			left join minimumunit j on a.minimumunitid = j.minimum_unit_id
+			left join genericnameinfo k on a.genericnameid = k.genericnameid
+			left join internationalatc1info l on a.interatc1id = l.interatc1id
+			left join internationalatc2info m on a.interatc2id = m.interatc2id
+			left join internationalatc3info n on a.interatc3id = n.interatc3id
+		<where>
+			<trim suffixOverrides="AND | OR" prefix="1=1">
+				<if test="year != null and year != ''">
+					AND a.sales_year = #{year,jdbcType=INTEGER}
+				</if>
+			</trim>
+		</where>
+		<trim prefix="group by">
+			sales_month
+		</trim>
+		) tb
+	</select>
+
+	<!-- 根据返回年的个数 -->
+	<select id="selectByYear5Counts" resultMap="BaseResultMap3" parameterType="java.util.Map">
+		select
+		TOP 5 a.sales_year yearCounts
+		from medicalsalesdata a
+		 left join manufacturertypeinfo c on a.manutypeid = c.manutypeid
+		 left join manufacturerinfo d on a.manuid = d.manuid
+		 left join province e on a.proviceid = e.provinceid
+		 left join productnameinfo f on a.productnameid = f.productnameid
+		 left join dosageforminfo g on a.dosageformid = g.dosageformid
+		 left join specificationsinfo h on a.specificationsid = h.specificationsid
+		 left join packaginginfo i on a.packagingid = i.packagingid
+		 left join minimumunit j on a.minimumunitid = j.minimum_unit_id
+		 left join genericnameinfo k on a.genericnameid = k.genericnameid
+		 left join internationalatc1info l on a.interatc1id = l.interatc1id
+		 left join internationalatc2info m on a.interatc2id = m.interatc2id
+		 left join internationalatc3info n on a.interatc3id = n.interatc3id
+		<where>
+			<trim suffixOverrides="AND | OR" prefix="1=1">
+				<if test="year != null and year != ''">
+					AND a.sales_year &lt;= #{year,jdbcType=INTEGER}
+				</if>
+				<if test="codeid != null and codeid != ''">
+					<choose>
+						<when test="atcType != null and atcType == 1">
+							AND l.interatc1id = #{codeid,jdbcType=INTEGER}
+						</when>
+						<when test="atcType != null and atcType == 2">
+							AND a.interatc2id = #{codeid,jdbcType=INTEGER}
+						</when>
+						<when test="atcType != null and atcType == 3">
+							AND a.interatc3id = #{codeid,jdbcType=INTEGER}
+						</when>
+						<when test="atcType != null and atcType == 4">
+							AND a.genericnameid = #{codeid,jdbcType=INTEGER}
+						</when>
+					</choose>
+				</if>
+				<if test="interatc2parentcode != null and interatc2parentcode != ''">
+					AND m.parentcode = #{interatc2parentcode,jdbcType=NVARCHAR}
+				</if>
+				<if test="interatc3parentcode != null and interatc3parentcode != ''">
+					AND n.parentcode = #{interatc3parentcode,jdbcType=NVARCHAR}
+				</if>
+				<if test="genericnameparentcode != null and genericnameparentcode != ''">
+					AND k.parentcode = #{genericnameparentcode,jdbcType=NVARCHAR}
+				</if>
+				<if test="manuid != null and manuid != ''">
+					AND a.manuid = #{manuid,jdbcType=INTEGER}
+				</if>
+				<if test="manutypeid != null and manutypeid != ''">
+					AND a.manutypeid = #{manutypeid,jdbcType=INTEGER}
+				</if>
+				<if test="provinceid != null and provinceid != ''">
+					AND a.provinceid = #{provinceid,jdbcType=INTEGER}
+				</if>
+				<if test="productnameid != null and productnameid != ''">
+					AND a.productnameid = #{productnameid,jdbcType=INTEGER}
+				</if>
+				<if test="dosageformid != null and dosageformid != ''">
+					AND a.dosageformid = #{dosageformid,jdbcType=INTEGER}
+				</if>
+				<if test="specificationsid != null and specificationsid != ''">
+					AND a.specificationsid = #{specificationsid,jdbcType=INTEGER}
+				</if>
+				<if test="packagingid != null and yepackagingidar != ''">
+					AND a.packagingid = #{packagingid,jdbcType=INTEGER}
+				</if>
+				<if test="minimumunitid != null and minimumunitid != ''">
+					AND a.minimum_unit_id = #{minimumunitid,jdbcType=INTEGER}
+				</if>
+			</trim>
+		</where>
+		group by a.sales_year order by a.sales_year desc
+	</select>
+
+	<!-- 计算增长率主方法(年）计算累计销售增长率 -->
+	<select id="selectByReportLjxsZzlYear" resultMap="BaseResultMap" parameterType="java.util.Map">
+		SELECT
+		SUM(sales_value) value,sales_year
+		FROM medicalsalesdata a
+		 left join manufacturertypeinfo c on a.manutypeid = c.manutypeid
+		 left join manufacturerinfo d on a.manuid = d.manuid
+		 left join province e on a.proviceid = e.provinceid
+		 left join productnameinfo f on a.productnameid = f.productnameid
+		 left join dosageforminfo g on a.dosageformid = g.dosageformid
+		 left join specificationsinfo h on a.specificationsid = h.specificationsid
+		 left join packaginginfo i on a.packagingid = i.packagingid
+		 left join minimumunit j on a.minimumunitid = j.minimum_unit_id
+		 left join genericnameinfo k on a.genericnameid = k.genericnameid
+		 left join internationalatc1info l on a.interatc1id = l.interatc1id
+		 left join internationalatc2info m on a.interatc2id = m.interatc2id
+		 left join internationalatc3info n on a.interatc3id = n.interatc3id
+		<where>
+			<trim suffixOverrides="AND | OR" prefix="1=1">
+				<if test="timeEnd != null and timeEnd != ''">
+					AND a.sales_year BETWEEN #{timeBegin,jdbcType=NVARCHAR} 
+					AND #{timeEnd,jdbcType=NVARCHAR}
+				</if>
+				<if test="codeid != null and codeid != ''">
+					<choose>
+						<when test="atcType != null and atcType == 1">
+							AND l.interatc1id = #{codeid,jdbcType=INTEGER}
+						</when>
+						<when test="atcType != null and atcType == 2">
+							AND a.interatc2id = #{codeid,jdbcType=INTEGER}
+						</when>
+						<when test="atcType != null and atcType == 3">
+							AND a.interatc3id = #{codeid,jdbcType=INTEGER}
+						</when>
+						<when test="atcType != null and atcType == 4">
+							AND a.genericnameid = #{codeid,jdbcType=INTEGER}
+						</when>
+					</choose>
+				</if>
+				<if test="interatc2parentcode != null and interatc2parentcode != ''">
+					AND m.parentcode = #{interatc2parentcode,jdbcType=NVARCHAR}
+				</if>
+				<if test="interatc3parentcode != null and interatc3parentcode != ''">
+					AND n.parentcode = #{interatc3parentcode,jdbcType=NVARCHAR}
+				</if>
+				<if test="genericnameparentcode != null and genericnameparentcode != ''">
+					AND k.parentcode = #{genericnameparentcode,jdbcType=NVARCHAR}
+				</if>
+				<if test="manuid != null and manuid != ''">
+					AND a.manuid = #{manuid,jdbcType=INTEGER}
+				</if>
+				<if test="manutypeid != null and manutypeid != ''">
+					AND a.manutypeid = #{manutypeid,jdbcType=INTEGER}
+				</if>
+				<if test="provinceid != null and provinceid != ''">
+					AND a.provinceid = #{provinceid,jdbcType=INTEGER}
+				</if>
+				<if test="productnameid != null and productnameid != ''">
+					AND a.productnameid = #{productnameid,jdbcType=INTEGER}
+				</if>
+				<if test="dosageformid != null and dosageformid != ''">
+					AND a.dosageformid = #{dosageformid,jdbcType=INTEGER}
+				</if>
+				<if test="specificationsid != null and specificationsid != ''">
+					AND a.specificationsid = #{specificationsid,jdbcType=INTEGER}
+				</if>
+				<if test="packagingid != null and yepackagingidar != ''">
+					AND a.packagingid = #{packagingid,jdbcType=INTEGER}
+				</if>
+				<if test="minimumunitid != null and minimumunitid != ''">
+					AND a.minimum_unit_id = #{minimumunitid,jdbcType=INTEGER}
+				</if>
+			</trim>
+		</where>
+		<trim prefix="group by">
+			a.sales_year
+		</trim>
+		<trim prefix="order by">
+			a.sales_year
+		</trim>
+	</select>
+	
+	<!-- 查询每个省份的市场占比（年） -->
+	<select id="selectByReportSczbYear" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select tb.provincename,(tb.value/tb.value2)*100 zb from(
+			select e.provincename,SUM(a.sales_value) value,
+				(select SUM(a.sales_value) from medicalsalesdata a
+					left join manufacturertypeinfo c on a.manutypeid = c.manutypeid
+					left join manufacturerinfo d on a.manuid = d.manuid
+					left join province e on a.proviceid = e.provinceid
+					left join productnameinfo f on a.productnameid = f.productnameid
+					left join dosageforminfo g on a.dosageformid = g.dosageformid
+					left join specificationsinfo h on a.specificationsid = h.specificationsid
+					left join packaginginfo i on a.packagingid = i.packagingid
+					left join minimumunit j on a.minimumunitid = j.minimum_unit_id
+					left join genericnameinfo k on a.genericnameid = k.genericnameid
+					left join internationalatc1info l on a.interatc1id = l.interatc1id
+		 			left join internationalatc2info m on a.interatc2id = m.interatc2id
+		 			left join internationalatc3info n on a.interatc3id = n.interatc3id
+					<where>
+						<trim>
+							<if test="year != null and year != ''">
+								AND a.sales_year = #{year,jdbcType=NVARCHAR}
+							</if>
+							<if test="codeid != null and codeid != ''">
+								<choose>
+									<when test="atcType != null and atcType == 1">
+										AND l.interatc1id = #{codeid,jdbcType=INTEGER}
+									</when>
+									<when test="atcType != null and atcType == 2">
+										AND a.interatc2id = #{codeid,jdbcType=INTEGER}
+									</when>
+									<when test="atcType != null and atcType == 3">
+										AND a.interatc3id = #{codeid,jdbcType=INTEGER}
+									</when>
+									<when test="atcType != null and atcType == 4">
+										AND a.genericnameid = #{codeid,jdbcType=INTEGER}
+									</when>
+								</choose>
+							</if>
+							<!-- <if test="interatc2parentcode != null and interatc2parentcode != ''">
+								AND m.parentcode = #{interatc2parentcode,jdbcType=NVARCHAR}
+							</if>
+							<if test="interatc3parentcode != null and interatc3parentcode != ''">
+								AND n.parentcode = #{interatc3parentcode,jdbcType=NVARCHAR}
+							</if>
+							<if test="genericnameparentcode != null and genericnameparentcode != ''">
+								AND k.parentcode = #{genericnameparentcode,jdbcType=NVARCHAR}
+							</if> -->
+							<if test="manuid != null and manuid != ''">
+								AND a.manuid = #{manuid,jdbcType=INTEGER}
+							</if>
+							<if test="manutypeid != null and manutypeid != ''">
+								AND a.manutypeid = #{manutypeid,jdbcType=INTEGER}
+							</if>
+							<if test="provinceid != null and provinceid != ''">
+								AND a.provinceid = #{provinceid,jdbcType=INTEGER}
+							</if>
+							<!-- <if test="productnameid != null and productnameid != ''">
+								AND a.productnameid = #{productnameid,jdbcType=INTEGER}
+							</if> -->
+							<!-- <if test="dosageformid != null and dosageformid != ''">
+								AND a.dosageformid = #{dosageformid,jdbcType=INTEGER}
+							</if>
+							<if test="specificationsid != null and specificationsid != ''">
+								AND a.specificationsid = #{specificationsid,jdbcType=INTEGER}
+							</if>
+							<if test="packagingid != null and yepackagingidar != ''">
+								AND a.packagingid = #{packagingid,jdbcType=INTEGER}
+							</if>
+							<if test="minimumunitid != null and minimumunitid != ''">
+								AND a.minimum_unit_id = #{minimumunitid,jdbcType=INTEGER}
+							</if> -->
+						</trim>
+					</where>
+					) value2
+					from medicalsalesdata a 
+					left join manufacturertypeinfo c on a.manutypeid = c.manutypeid
+					left join manufacturerinfo d on a.manuid = d.manuid
+					left join province e on a.proviceid = e.provinceid
+					left join productnameinfo f on a.productnameid = f.productnameid
+					left join dosageforminfo g on a.dosageformid = g.dosageformid
+					left join specificationsinfo h on a.specificationsid = h.specificationsid
+					left join packaginginfo i on a.packagingid = i.packagingid
+					left join minimumunit j on a.minimumunitid = j.minimum_unit_id
+					left join genericnameinfo k on a.genericnameid = k.genericnameid
+					left join internationalatc1info l on a.interatc1id = l.interatc1id
+		 			left join internationalatc2info m on a.interatc2id = m.interatc2id
+		 			left join internationalatc3info n on a.interatc3id = n.interatc3id
+					<where>
+						<trim>
+							<if test="year != null and year != ''">
+								AND a.sales_year = #{year,jdbcType=NVARCHAR}
+							</if>
+							<if test="codeid != null and codeid != ''">
+								<choose>
+									<when test="atcType != null and atcType == 1">
+										AND l.interatc1id = #{codeid,jdbcType=INTEGER}
+									</when>
+									<when test="atcType != null and atcType == 2">
+										AND a.interatc2id = #{codeid,jdbcType=INTEGER}
+									</when>
+									<when test="atcType != null and atcType == 3">
+										AND a.interatc3id = #{codeid,jdbcType=INTEGER}
+									</when>
+									<when test="atcType != null and atcType == 4">
+										AND a.genericnameid = #{codeid,jdbcType=INTEGER}
+									</when>
+								</choose>
+							</if>
+							<!-- <if test="interatc2parentcode != null and interatc2parentcode != ''">
+								AND m.parentcode = #{interatc2parentcode,jdbcType=NVARCHAR}
+							</if>
+							<if test="interatc3parentcode != null and interatc3parentcode != ''">
+								AND n.parentcode = #{interatc3parentcode,jdbcType=NVARCHAR}
+							</if>
+							<if test="genericnameparentcode != null and genericnameparentcode != ''">
+								AND k.parentcode = #{genericnameparentcode,jdbcType=NVARCHAR}
+							</if> -->
+							<if test="manuid != null and manuid != ''">
+								AND a.manuid = #{manuid,jdbcType=INTEGER}
+							</if>
+							<if test="manutypeid != null and manutypeid != ''">
+								AND a.manutypeid = #{manutypeid,jdbcType=INTEGER}
+							</if>
+							<if test="provinceid != null and provinceid != ''">
+								AND a.provinceid = #{provinceid,jdbcType=INTEGER}
+							</if>
+							<!-- <if test="productnameid != null and productnameid != ''">
+								AND a.productnameid = #{productnameid,jdbcType=INTEGER}
+							</if> -->
+							<!-- <if test="dosageformid != null and dosageformid != ''">
+								AND a.dosageformid = #{dosageformid,jdbcType=INTEGER}
+							</if>
+							<if test="specificationsid != null and specificationsid != ''">
+								AND a.specificationsid = #{specificationsid,jdbcType=INTEGER}
+							</if>
+							<if test="packagingid != null and yepackagingidar != ''">
+								AND a.packagingid = #{packagingid,jdbcType=INTEGER}
+							</if>
+							<if test="minimumunitid != null and minimumunitid != ''">
+								AND a.minimum_unit_id = #{minimumunitid,jdbcType=INTEGER}
+							</if> -->
+						</trim>
+					</where>
+					<trim prefix="group by">
+						e.provincename
+					</trim>
+			 ) tb
+			 <trim prefix="order by ">
+			 	tb.provincename
+			 </trim>
+	</select>
+	
+	<!-- 查询每个省份的复合增长率（年） -->
+	<select id="selectByReportFhzzlYear" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select a.sales_year,e.provincename,SUM(a.sales_value) value  
+		  from medicalsalesdata a 
+			left join manufacturertypeinfo c on a.manutypeid = c.manutypeid
+			left join manufacturerinfo d on a.manuid = d.manuid
+			left join province e on a.proviceid = e.provinceid
+			left join productnameinfo f on a.productnameid = f.productnameid
+			left join dosageforminfo g on a.dosageformid = g.dosageformid
+			left join specificationsinfo h on a.specificationsid = h.specificationsid
+			left join packaginginfo i on a.packagingid = i.packagingid
+			left join minimumunit j on a.minimumunitid = j.minimum_unit_id
+			left join genericnameinfo k on a.genericnameid = k.genericnameid
+			left join internationalatc1info l on a.interatc1id = l.interatc1id
+		 	left join internationalatc2info m on a.interatc2id = m.interatc2id
+		 	left join internationalatc3info n on a.interatc3id = n.interatc3id
+		<where>
+			<trim suffixOverrides="AND | OR" prefix="1=1">
+				<if test="timeEnd != null and timeEnd != ''">
+					AND a.sales_year between #{timeBegin,jdbcType=NVARCHAR} 
+					AND #{timeEnd,jdbcType=NVARCHAR}
+				</if>
+				<if test="codeid != null and codeid != ''">
+					<choose>
+						<when test="atcType != null and atcType == 1">
+							AND l.interatc1id = #{codeid,jdbcType=INTEGER}
+						</when>
+						<when test="atcType != null and atcType == 2">
+							AND a.interatc2id = #{codeid,jdbcType=INTEGER}
+						</when>
+						<when test="atcType != null and atcType == 3">
+							AND a.interatc3id = #{codeid,jdbcType=INTEGER}
+						</when>
+						<when test="atcType != null and atcType == 4">
+							AND a.genericnameid = #{codeid,jdbcType=INTEGER}
+						</when>
+					</choose>
+				</if>
+				<!-- <if test="interatc2parentcode != null and interatc2parentcode != ''">
+					AND m.parentcode = #{interatc2parentcode,jdbcType=NVARCHAR}
+				</if>
+				<if test="interatc3parentcode != null and interatc3parentcode != ''">
+					AND n.parentcode = #{interatc3parentcode,jdbcType=NVARCHAR}
+				</if>
+				<if test="genericnameparentcode != null and genericnameparentcode != ''">
+					AND k.parentcode = #{genericnameparentcode,jdbcType=NVARCHAR}
+				</if> -->
+				<if test="manuid != null and manuid != ''">
+					AND a.manuid = #{manuid,jdbcType=INTEGER}
+				</if>
+				<if test="manutypeid != null and manutypeid != ''">
+					AND a.manutypeid = #{manutypeid,jdbcType=INTEGER}
+				</if>
+				<if test="provinceid != null and provinceid != ''">
+					AND a.provinceid = #{provinceid,jdbcType=INTEGER}
+				</if>
+				<!-- <if test="productnameid != null and productnameid != ''">
+					AND a.productnameid = #{productnameid,jdbcType=INTEGER}
+				</if> -->
+				<!-- <if test="dosageformid != null and dosageformid != ''">
+					AND a.dosageformid = #{dosageformid,jdbcType=INTEGER}
+				</if>
+				<if test="specificationsid != null and specificationsid != ''">
+					AND a.specificationsid = #{specificationsid,jdbcType=INTEGER}
+				</if>
+				<if test="packagingid != null and yepackagingidar != ''">
+					AND a.packagingid = #{packagingid,jdbcType=INTEGER}
+				</if>
+				<if test="minimumunitid != null and minimumunitid != ''">
+					AND a.minimum_unit_id = #{minimumunitid,jdbcType=INTEGER}
+				</if> -->
+			</trim>
+		</where>
+		<trim prefix="group by">
+			e.provincename,a.sales_year
+		</trim>
+		<trim prefix="order by">
+			a.sales_year desc,e.provincename
+		</trim>
+	</select>
+	
+	<!-- 根据企业类型查询销售表现 -->
+	<select id="selectByReportXsbx" resultMap="BaseResultMap4" parameterType="java.util.Map">
+		select SUM(a.sales_value) xse,a.sales_year time,c.manutypename manuTypeName from medicalsalesdata a
+			left join manufacturertypeinfo c on a.manutypeid = c.manutypeid
+			left join manufacturerinfo d on a.manuid = d.manuid
+			left join province e on a.proviceid = e.provinceid
+			left join productnameinfo f on a.productnameid = f.productnameid
+			left join dosageforminfo g on a.dosageformid = g.dosageformid
+			left join specificationsinfo h on a.specificationsid = h.specificationsid
+			left join packaginginfo i on a.packagingid = i.packagingid
+			left join minimumunit j on a.minimumunitid = j.minimum_unit_id
+			left join genericnameinfo k on a.genericnameid = k.genericnameid
+			left join internationalatc1info l on a.interatc1id = l.interatc1id
+			left join internationalatc2info m on a.interatc2id = m.interatc2id
+			left join internationalatc3info n on a.interatc3id = n.interatc3id
+		<where>
+			<trim suffixOverrides="AND | OR" prefix="1=1">
+				<if test="timeEnd != null and timeEnd != ''">
+					AND a.sales_year between #{timeBegin,jdbcType=NVARCHAR} 
+					AND #{timeEnd,jdbcType=NVARCHAR}
+				</if>
+				<if test="codeid != null and codeid != ''">
+					<choose>
+						<when test="atcType != null and atcType == 1">
+							AND l.interatc1id = #{codeid,jdbcType=INTEGER}
+						</when>
+						<when test="atcType != null and atcType == 2">
+							AND a.interatc2id = #{codeid,jdbcType=INTEGER}
+						</when>
+						<when test="atcType != null and atcType == 3">
+							AND a.interatc3id = #{codeid,jdbcType=INTEGER}
+						</when>
+						<when test="atcType != null and atcType == 4">
+							AND a.genericnameid = #{codeid,jdbcType=INTEGER}
+						</when>
+					</choose>
+				</if>
+				<if test="interatc2parentcode != null and interatc2parentcode != ''">
+					AND m.parentcode = #{interatc2parentcode,jdbcType=NVARCHAR}
+				</if>
+				<if test="interatc3parentcode != null and interatc3parentcode != ''">
+					AND n.parentcode = #{interatc3parentcode,jdbcType=NVARCHAR}
+				</if>
+				<if test="genericnameparentcode != null and genericnameparentcode != ''">
+					AND k.parentcode = #{genericnameparentcode,jdbcType=NVARCHAR}
+				</if>
+				<if test="manuid != null and manuid != ''">
+					AND a.manuid = #{manuid,jdbcType=INTEGER}
+				</if>
+				<if test="manutypeid != null and manutypeid != ''">
+					AND a.manutypeid = #{manutypeid,jdbcType=INTEGER}
+				</if>
+				<if test="provinceid != null and provinceid != ''">
+					AND a.provinceid = #{provinceid,jdbcType=INTEGER}
+				</if>
+				<if test="productnameid != null and productnameid != ''">
+					AND a.productnameid = #{productnameid,jdbcType=INTEGER}
+				</if>
+				<if test="dosageformid != null and dosageformid != ''">
+					AND a.dosageformid = #{dosageformid,jdbcType=INTEGER}
+				</if>
+				<if test="specificationsid != null and specificationsid != ''">
+					AND a.specificationsid = #{specificationsid,jdbcType=INTEGER}
+				</if>
+				<if test="packagingid != null and yepackagingidar != ''">
+					AND a.packagingid = #{packagingid,jdbcType=INTEGER}
+				</if>
+				<if test="minimumunitid != null and minimumunitid != ''">
+					AND a.minimum_unit_id = #{minimumunitid,jdbcType=INTEGER}
+				</if>
+				<if test="manutype != null and manutype != ''">
+					AND c.manutypename in (
+					<foreach item="item" index="index" collection="manutype" separator=","><!-- 当Map里有List集合的时候 collection=“你Map的Key” -->
+						#{item.neizi},#{item.hezi}
+					</foreach>
+					 )
+				</if>
+			</trim>
+		</where>
+		<trim prefix="group by">
+			c.manutypename,a.sales_year
+		</trim>
+		<trim prefix="order by">
+			a.sales_year
+		</trim>
+	</select>
+	
+	<!-- ATC与通用名的销售额占比 -->
+	<select id="selectByAtcXsZb" resultMap="BaseResultMap4" parameterType="java.util.Map">
+		with tempTb1 as (
+				select a.sales_year
+				<choose>
+					<!-- <when test="atcType != null and atcType == 4">,k.genericnamename_ch</when>
+					<when test="atcType != null and atcType == 3">,n.descinfo</when>
+					<when test="atcType != null and atcType == 2">,m.descinfo</when>
+					<when test="atcType != null and atcType == 1">,l.descinfo</when> -->
+					<when test="atcType != null and atcType == 3">,k.genericnamename_ch</when>
+					<when test="atcType != null and atcType == 2">,n.descinfo</when>
+					<when test="atcType != null and atcType == 1">,m.descinfo</when>
+				</choose>
+				,SUM(a.sales_value) value from medicalsalesdata a
+							left join manufacturertypeinfo c on a.manutypeid = c.manutypeid
+							left join manufacturerinfo d on a.manuid = d.manuid
+							left join province e on a.proviceid = e.provinceid
+							left join productnameinfo f on a.productnameid = f.productnameid
+							left join dosageforminfo g on a.dosageformid = g.dosageformid
+							left join specificationsinfo h on a.specificationsid = h.specificationsid
+							left join packaginginfo i on a.packagingid = i.packagingid
+							left join minimumunit j on a.minimumunitid = j.minimum_unit_id
+							left join genericnameinfo k on a.genericnameid = k.genericnameid
+							left join internationalatc1info l on a.interatc1id = l.interatc1id
+			 				left join internationalatc2info m on a.interatc2id = m.interatc2id
+			 				left join internationalatc3info n on a.interatc3id = n.interatc3id
+			 			<where>
+			 				<trim suffixOverrides="AND | OR" prefix="1=1">
+			 					
+								<if test="manuid != null and manuid != ''">
+									AND a.manuid = #{manuid,jdbcType=INTEGER}
+								</if>
+								<if test="manutypeid != null and manutypeid != ''">
+									AND a.manutypeid = #{manutypeid,jdbcType=INTEGER}
+								</if>
+								<if test="provinceid != null and provinceid != ''">
+									AND a.provinceid = #{provinceid,jdbcType=INTEGER}
+								</if>
+								<if test="productnameid != null and productnameid != ''">
+									AND a.productnameid = #{productnameid,jdbcType=INTEGER}
+								</if>
+								<if test="dosageformid != null and dosageformid != ''">
+									AND a.dosageformid = #{dosageformid,jdbcType=INTEGER}
+								</if>
+								<if test="specificationsid != null and specificationsid != ''">
+									AND a.specificationsid = #{specificationsid,jdbcType=INTEGER}
+								</if>
+								<if test="packagingid != null and yepackagingidar != ''">
+									AND a.packagingid = #{packagingid,jdbcType=INTEGER}
+								</if>
+								<if test="minimumunitid != null and minimumunitid != ''">
+									AND a.minimum_unit_id = #{minimumunitid,jdbcType=INTEGER}
+								</if>
+								<if test="code != null and code != ''">
+									<choose>
+										<!-- <when test="atcType != null and atcType == 4">AND k.parentcode = #{code,jdbcType=NVARCHAR}</when>
+										<when test="atcType != null and atcType == 3">AND n.interatc3name = #{code,jdbcType=NVARCHAR}</when>
+										<when test="atcType != null and atcType == 2">AND m.interatc2name = #{code,jdbcType=NVARCHAR}</when>
+										<when test="atcType != null and atcType == 1">AND l.interatc1name = #{code,jdbcType=NVARCHAR}</when> -->
+										<when test="atcType != null and atcType == 3">AND k.parentcode = #{code,jdbcType=NVARCHAR}</when>
+										<when test="atcType != null and atcType == 2">AND n.parentcode = #{code,jdbcType=NVARCHAR}</when>
+										<when test="atcType != null and atcType == 1">AND m.parentcode = #{code,jdbcType=NVARCHAR}</when>
+									</choose>
+								</if>
+								<if test="timeEnd != null and timeEnd != ''">
+									AND a.sales_year between #{timeBegin,jdbcType=NVARCHAR} AND #{timeEnd,jdbcType=NVARCHAR}
+								</if>
+			 				</trim>
+			 			</where>
+			 			<trim prefix="group by">
+			 				 a.sales_year
+			 				 <choose>
+								<!-- <when test="atcType != null and atcType == 4">,k.genericnamename_ch</when>
+								<when test="atcType != null and atcType == 3">,n.descinfo</when>
+								<when test="atcType != null and atcType == 2">,m.descinfo</when>
+								<when test="atcType != null and atcType == 1">,l.descinfo</when> -->
+								<when test="atcType != null and atcType == 3">,k.genericnamename_ch</when>
+								<when test="atcType != null and atcType == 2">,n.descinfo</when>
+								<when test="atcType != null and atcType == 1">,m.descinfo</when>
+							</choose>
+			 			</trim>
+			),tempTb2 as (
+				select a.sales_year, SUM(a.sales_value) value from medicalsalesdata a
+							left join manufacturertypeinfo c on a.manutypeid = c.manutypeid
+							left join manufacturerinfo d on a.manuid = d.manuid
+							left join province e on a.proviceid = e.provinceid
+							left join productnameinfo f on a.productnameid = f.productnameid
+							left join dosageforminfo g on a.dosageformid = g.dosageformid
+							left join specificationsinfo h on a.specificationsid = h.specificationsid
+							left join packaginginfo i on a.packagingid = i.packagingid
+							left join minimumunit j on a.minimumunitid = j.minimum_unit_id
+							left join genericnameinfo k on a.genericnameid = k.genericnameid
+							left join internationalatc1info l on a.interatc1id = l.interatc1id
+			 				left join internationalatc2info m on a.interatc2id = m.interatc2id
+			 				left join internationalatc3info n on a.interatc3id = n.interatc3id
+			 				<where>
+			 					<trim suffixOverrides="AND | OR" prefix="1=1">
+			 						<if test="code != null and code != ''">
+										<choose>
+<!-- 											<when test="atcType != null and atcType == 4">AND n.interatc3name = #{code,jdbcType=NVARCHAR}</when> -->
+											<when test="atcType != null and atcType == 3">AND n.interatc3name = #{code,jdbcType=NVARCHAR}</when>
+											<when test="atcType != null and atcType == 2">AND m.interatc2name = #{code,jdbcType=NVARCHAR}</when>
+											<when test="atcType != null and atcType == 1">AND l.interatc1name = #{code,jdbcType=NVARCHAR}</when>
+										</choose>
+									</if>
+									<if test="manuid != null and manuid != ''">
+										AND a.manuid = #{manuid,jdbcType=INTEGER}
+									</if>
+									<if test="manutypeid != null and manutypeid != ''">
+										AND a.manutypeid = #{manutypeid,jdbcType=INTEGER}
+									</if>
+									<if test="provinceid != null and provinceid != ''">
+										AND a.provinceid = #{provinceid,jdbcType=INTEGER}
+									</if>
+									<if test="productnameid != null and productnameid != ''">
+										AND a.productnameid = #{productnameid,jdbcType=INTEGER}
+									</if>
+									<if test="dosageformid != null and dosageformid != ''">
+										AND a.dosageformid = #{dosageformid,jdbcType=INTEGER}
+									</if>
+									<if test="specificationsid != null and specificationsid != ''">
+										AND a.specificationsid = #{specificationsid,jdbcType=INTEGER}
+									</if>
+									<if test="packagingid != null and yepackagingidar != ''">
+										AND a.packagingid = #{packagingid,jdbcType=INTEGER}
+									</if>
+									<if test="minimumunitid != null and minimumunitid != ''">
+										AND a.minimum_unit_id = #{minimumunitid,jdbcType=INTEGER}
+									</if>
+									<if test="timeEnd != null and timeEnd != ''">
+										AND a.sales_year between #{timeBegin,jdbcType=NVARCHAR} and #{timeEnd,jdbcType=NVARCHAR}
+									</if>
+			 					</trim>
+			 				</where>
+			 				<trim prefix="group by">
+			 					 a.sales_year
+			 				</trim>
+			)
+			<choose>
+				<!-- <when test="atcType != null and atcType == 4">
+					select a.genericnamename_ch name,a.sales_year time,b.value xse,(a.value/b.value)*100 xsezb from tempTb1 a , tempTb2 b where a.sales_year = b.sales_year order by a.sales_year
+				</when> -->
+				<!-- <when test="atcType != null and atcType == 3">
+					select a.descinfo name,a.sales_year time,b.value xse,(a.value/b.value)*100 xsezb from tempTb1 a , tempTb2 b where a.sales_year = b.sales_year order by a.sales_year
+				</when> -->
+				<when test="atcType != null and atcType == 3">
+					select a.genericnamename_ch name,a.sales_year time,b.value xse,(a.value/b.value)*100 xsezb from tempTb1 a , tempTb2 b where a.sales_year = b.sales_year order by a.sales_year
+				</when>
+				<when test="atcType != null and atcType == 2">
+					select a.descinfo name,a.sales_year time,b.value xse,(a.value/b.value)*100 xsezb from tempTb1 a , tempTb2 b where a.sales_year = b.sales_year order by a.sales_year
+				</when>
+				<when test="atcType != null and atcType == 1"></when>
+			</choose>
+	</select>
+	
+	<!-- 市场最小产品销售额占比 -->
+	<select id="selectByMinniUnitXseZb" resultMap="BaseResultMap4" parameterType="java.util.Map">
+		with tempTb1 as(
+			select a.sales_year,f.productname_ch+d.manuname_ch+g.dosageformname as minimum_unit_ch,SUM(a.sales_value) value from medicalsalesdata a
+						left join manufacturertypeinfo c on a.manutypeid = c.manutypeid
+						left join manufacturerinfo d on a.manuid = d.manuid
+						left join province e on a.proviceid = e.provinceid
+						left join productnameinfo f on a.productnameid = f.productnameid
+						left join dosageforminfo g on a.dosageformid = g.dosageformid
+						left join specificationsinfo h on a.specificationsid = h.specificationsid
+						left join packaginginfo i on a.packagingid = i.packagingid
+						left join minimumunit j on a.minimumunitid = j.minimum_unit_id
+						left join genericnameinfo k on a.genericnameid = k.genericnameid
+						left join internationalatc1info l on a.interatc1id = l.interatc1id
+		 				left join internationalatc2info m on a.interatc2id = m.interatc2id
+		 				left join internationalatc3info n on a.interatc3id = n.interatc3id
+		 				<where>
+		 					<trim suffixOverrides="AND | OR" prefix="1=1">
+		 						
+								<if test="manuid != null and manuid != ''">
+									AND a.manuid = #{manuid,jdbcType=INTEGER}
+								</if>
+								<if test="manutypeid != null and manutypeid != ''">
+									AND a.manutypeid = #{manutypeid,jdbcType=INTEGER}
+								</if>
+								<if test="provinceid != null and provinceid != ''">
+									AND a.provinceid = #{provinceid,jdbcType=INTEGER}
+								</if>
+								<if test="productnameid != null and productnameid != ''">
+									AND a.productnameid = #{productnameid,jdbcType=INTEGER}
+								</if>
+								<if test="dosageformid != null and dosageformid != ''">
+									AND a.dosageformid = #{dosageformid,jdbcType=INTEGER}
+								</if>
+								<if test="specificationsid != null and specificationsid != ''">
+									AND a.specificationsid = #{specificationsid,jdbcType=INTEGER}
+								</if>
+								<if test="packagingid != null and yepackagingidar != ''">
+									AND a.packagingid = #{packagingid,jdbcType=INTEGER}
+								</if>
+								<if test="minimumunitid != null and minimumunitid != ''">
+									AND a.minimum_unit_id = #{minimumunitid,jdbcType=INTEGER}
+								</if>
+								<if test="timeEnd != null and timeEnd != ''">
+									AND a.sales_year between #{timeBegin,jdbcType=NVARCHAR} AND #{timeEnd,jdbcType=NVARCHAR}
+<!-- 									AND a.sales_year = 2012 -->
+								</if>
+								<if test="codeid != null and codeid != ''">
+									<choose>
+										<when test="atcType != null and atcType == 4">AND k.genericnameid = #{codeid,jdbcType=INTEGER}</when>
+										<when test="atcType != null and atcType == 3">AND n.interatc3id = #{codeid,jdbcType=INTEGER}</when>
+										<when test="atcType != null and atcType == 2">AND m.interatc2id = #{codeid,jdbcType=INTEGER}</when>
+										<when test="atcType != null and atcType == 1">AND l.interatc1id = #{codeid,jdbcType=INTEGER}</when>
+									</choose>
+								</if>
+		 					</trim>
+		 				</where>
+		 				<trim prefix="group by">
+		 					f.productname_ch+d.manuname_ch+g.dosageformname,a.sales_year
+		 				</trim>
+		),
+		tempTb2 as(
+			 select a.sales_year,SUM(a.sales_value) value from medicalsalesdata a
+						left join manufacturertypeinfo c on a.manutypeid = c.manutypeid
+						left join manufacturerinfo d on a.manuid = d.manuid
+						left join province e on a.proviceid = e.provinceid
+						left join productnameinfo f on a.productnameid = f.productnameid
+						left join dosageforminfo g on a.dosageformid = g.dosageformid
+						left join specificationsinfo h on a.specificationsid = h.specificationsid
+						left join packaginginfo i on a.packagingid = i.packagingid
+						left join minimumunit j on a.minimumunitid = j.minimum_unit_id
+						left join genericnameinfo k on a.genericnameid = k.genericnameid
+						left join internationalatc1info l on a.interatc1id = l.interatc1id
+		 				left join internationalatc2info m on a.interatc2id = m.interatc2id
+		 				left join internationalatc3info n on a.interatc3id = n.interatc3id
+		 				<where>
+		 					<trim suffixOverrides="AND | OR" prefix="1=1">
+		 						<if test="timeEnd != null and timeEnd != ''">
+		 							AND a.sales_year between #{timeBegin,jdbcType=NVARCHAR} AND #{timeEnd,jdbcType=NVARCHAR}
+<!-- 									AND a.sales_year = 2012 -->
+		 						</if>
+		 						
+								<if test="manuid != null and manuid != ''">
+									AND a.manuid = #{manuid,jdbcType=INTEGER}
+								</if>
+								<if test="manutypeid != null and manutypeid != ''">
+									AND a.manutypeid = #{manutypeid,jdbcType=INTEGER}
+								</if>
+								<if test="provinceid != null and provinceid != ''">
+									AND a.provinceid = #{provinceid,jdbcType=INTEGER}
+								</if>
+								<if test="productnameid != null and productnameid != ''">
+									AND a.productnameid = #{productnameid,jdbcType=INTEGER}
+								</if>
+								<if test="dosageformid != null and dosageformid != ''">
+									AND a.dosageformid = #{dosageformid,jdbcType=INTEGER}
+								</if>
+								<if test="specificationsid != null and specificationsid != ''">
+									AND a.specificationsid = #{specificationsid,jdbcType=INTEGER}
+								</if>
+								<if test="packagingid != null and yepackagingidar != ''">
+									AND a.packagingid = #{packagingid,jdbcType=INTEGER}
+								</if>
+								<if test="minimumunitid != null and minimumunitid != ''">
+									AND a.minimum_unit_id = #{minimumunitid,jdbcType=INTEGER}
+								</if>
+		 						<if test="codeid != null and codeid != ''">
+		 							<choose>
+										<when test="atcType != null and atcType == 4">AND k.genericnameid = #{codeid,jdbcType=INTEGER}</when>
+										<when test="atcType != null and atcType == 3">AND n.interatc3id = #{codeid,jdbcType=INTEGER}</when>
+										<when test="atcType != null and atcType == 2">AND m.interatc2id = #{codeid,jdbcType=INTEGER}</when>
+										<when test="atcType != null and atcType == 1">AND l.interatc1id = #{codeid,jdbcType=INTEGER}</when>
+									</choose>
+		 						</if>
+		 					</trim>
+		 				</where>
+		 				<trim prefix="group by">
+		 					 a.sales_year
+		 				</trim>
+		)
+		select a.minimum_unit_ch name,a.sales_year time,a.value xse from tempTb1 a, tempTb2 b where a.sales_year = b.sales_year order by time
+	</select>	
+	
+	<!-- 开始 -->
+	<!-- 查询原始数据根据时间和商品名称 -->
+	<select id="selectByTop10Xsze" resultMap="BaseResultMap4" parameterType="java.util.Map">
+		select a.sales_year time<!-- ,f.productname_ch name ,SUM(a.sales_value) xse-->  from medicalsalesdata a
+				left join manufacturertypeinfo c on a.manutypeid = c.manutypeid
+				left join manufacturerinfo d on a.manuid = d.manuid
+				left join province e on a.proviceid = e.provinceid
+				left join productnameinfo f on a.productnameid = f.productnameid
+				left join dosageforminfo g on a.dosageformid = g.dosageformid
+				left join specificationsinfo h on a.specificationsid = h.specificationsid
+				left join packaginginfo i on a.packagingid = i.packagingid
+				left join minimumunit j on a.minimumunitid = j.minimum_unit_id
+				left join genericnameinfo k on a.genericnameid = k.genericnameid
+				left join internationalatc1info l on a.interatc1id = l.interatc1id
+ 				left join internationalatc2info m on a.interatc2id = m.interatc2id
+ 				left join internationalatc3info n on a.interatc3id = n.interatc3id
+ 			<where>
+ 				<trim suffixOverrides="AND | OR" prefix="1=1">
+ 					<if test="timeEnd != null and timeEnd != ''">
+						AND a.sales_year between #{timeBegin,jdbcType=NVARCHAR} 
+						AND #{timeEnd,jdbcType=NVARCHAR}
+					</if>
+					<if test="interatc1id != null and interatc1id != ''">
+						AND l.interatc1id = #{interatc1id,jdbcType=INTEGER}
+					</if>
+					<if test="interatc2id != null and interatc2id != ''">
+						AND a.interatc2id = #{interatc2id,jdbcType=INTEGER}
+					</if>
+					<if test="interatc3id != null and interatc3id != ''">
+						AND a.interatc3id = #{interatc3id,jdbcType=INTEGER}
+					</if>
+					<if test="genericnameid != null and genericnameid != ''">
+						AND a.genericnameid = #{genericnameid,jdbcType=INTEGER}
+					</if>
+					<if test="interatc2parentcode != null and interatc2parentcode != ''">
+						AND m.parentcode = #{interatc2parentcode,jdbcType=NVARCHAR}
+					</if>
+					<if test="interatc3parentcode != null and interatc3parentcode != ''">
+						AND n.parentcode = #{interatc3parentcode,jdbcType=NVARCHAR}
+					</if>
+					<if test="genericnameparentcode != null and genericnameparentcode != ''">
+						AND k.parentcode = #{genericnameparentcode,jdbcType=NVARCHAR}
+					</if>
+					<if test="manuid != null and manuid != ''">
+						AND a.manuid = #{manuid,jdbcType=INTEGER}
+					</if>
+					<if test="manutypeid != null and manutypeid != ''">
+						AND a.manutypeid = #{manutypeid,jdbcType=INTEGER}
+					</if>
+					<if test="provinceid != null and provinceid != ''">
+						AND a.provinceid = #{provinceid,jdbcType=INTEGER}
+					</if>
+					<if test="productnameid != null and productnameid != ''">
+						AND a.productnameid = #{productnameid,jdbcType=INTEGER}
+					</if>
+					<if test="dosageformid != null and dosageformid != ''">
+						AND a.dosageformid = #{dosageformid,jdbcType=INTEGER}
+					</if>
+					<if test="specificationsid != null and specificationsid != ''">
+						AND a.specificationsid = #{specificationsid,jdbcType=INTEGER}
+					</if>
+					<if test="packagingid != null and yepackagingidar != ''">
+						AND a.packagingid = #{packagingid,jdbcType=INTEGER}
+					</if>
+					<if test="minimumunitid != null and minimumunitid != ''">
+						AND a.minimum_unit_id = #{minimumunitid,jdbcType=INTEGER}
+					</if>
+ 				</trim>	
+ 			</where>
+ 			<trim prefix="group by">
+ 				a.sales_year<!-- ,f.productname_ch -->
+ 			</trim>
+ 			<trim prefix="order by">
+ 				a.sales_year
+ 			</trim>
+	</select>
+	
+	<!-- Top10的销售总额 -->
+	<select id="selectByTop10XszeZb" resultMap="BaseResultMap4" parameterType="java.util.Map">
+ 		<foreach item="item" index="index" collection="timeList" separator="union all"><!--当Map里有List集合的时候 collection=“你Map的Key” -->
+			select SUM(a.value) xse , #{item} time from (
+				select TOP 10 a.sales_year,SUM(a.sales_value) value  from medicalsalesdata a
+						left join manufacturertypeinfo c on a.manutypeid = c.manutypeid
+						left join manufacturerinfo d on a.manuid = d.manuid
+						left join province e on a.proviceid = e.provinceid
+						left join productnameinfo f on a.productnameid = f.productnameid
+						left join dosageforminfo g on a.dosageformid = g.dosageformid
+						left join specificationsinfo h on a.specificationsid = h.specificationsid
+						left join packaginginfo i on a.packagingid = i.packagingid
+						left join minimumunit j on a.minimumunitid = j.minimum_unit_id
+						left join genericnameinfo k on a.genericnameid = k.genericnameid
+						left join internationalatc1info l on a.interatc1id = l.interatc1id
+		 				left join internationalatc2info m on a.interatc2id = m.interatc2id
+		 				left join internationalatc3info n on a.interatc3id = n.interatc3id
+		 		<where>
+		 			<trim suffixOverrides="AND | OR" prefix="1=1">
+		 				AND a.sales_year = #{item}
+		 				<if test="codeid != null and codeid != ''">
+							<choose>
+								<when test="atcType != null and atcType == 4">AND k.genericnameid = #{codeid,jdbcType=INTEGER}</when>
+								<when test="atcType != null and atcType == 3">AND n.interatc3id = #{codeid,jdbcType=INTEGER}</when>
+								<when test="atcType != null and atcType == 2">AND m.interatc2id = #{codeid,jdbcType=INTEGER}</when>
+								<when test="atcType != null and atcType == 1">AND l.interatc1id = #{codeid,jdbcType=INTEGER}</when>
+							</choose>
+						</if>
+		 			</trim>
+		 		</where>
+		 		<trim prefix="group by">
+		 			a.sales_year,f.productname_ch order by value desc
+		 		</trim>
+	 			) a
+		</foreach>
+	</select>
+	
+	<!-- 求出选择的类型的销售总量 -->
+	<select id="selectByTop10Xszl" resultMap="BaseResultMap4" parameterType="java.util.Map">
+		<foreach item="item" index="index" collection="timeList" separator="union all"><!--当Map里有List集合的时候 collection=“你Map的Key” -->
+			select SUM(a.sales_value) xse,#{item} time from medicalsalesdata a
+				left join manufacturertypeinfo c on a.manutypeid = c.manutypeid
+				left join manufacturerinfo d on a.manuid = d.manuid
+				left join province e on a.proviceid = e.provinceid
+				left join productnameinfo f on a.productnameid = f.productnameid
+				left join dosageforminfo g on a.dosageformid = g.dosageformid
+				left join specificationsinfo h on a.specificationsid = h.specificationsid
+				left join packaginginfo i on a.packagingid = i.packagingid
+				left join minimumunit j on a.minimumunitid = j.minimum_unit_id
+				left join genericnameinfo k on a.genericnameid = k.genericnameid
+				left join internationalatc1info l on a.interatc1id = l.interatc1id
+ 				left join internationalatc2info m on a.interatc2id = m.interatc2id
+ 				left join internationalatc3info n on a.interatc3id = n.interatc3id
+		 		<where>
+		 			<trim suffixOverrides="AND | OR" prefix="1=1">
+		 				AND a.sales_year = #{item}
+						<if test="codeid != null and codeid != ''">
+							<choose>
+								<when test="atcType != null and atcType == 4">AND k.genericnameid = #{codeid,jdbcType=INTEGER}</when>
+								<when test="atcType != null and atcType == 3">AND n.interatc3id = #{codeid,jdbcType=INTEGER}</when>
+								<when test="atcType != null and atcType == 2">AND m.interatc2id = #{codeid,jdbcType=INTEGER}</when>
+								<when test="atcType != null and atcType == 1">AND l.interatc1id = #{codeid,jdbcType=INTEGER}</when>
+							</choose>
+						</if>
+						<if test="manuid != null and manuid != ''">
+							AND a.manuid = #{manuid,jdbcType=INTEGER}
+						</if>
+						<if test="manutypeid != null and manutypeid != ''">
+							AND a.manutypeid = #{manutypeid,jdbcType=INTEGER}
+						</if>
+						<if test="provinceid != null and provinceid != ''">
+							AND a.provinceid = #{provinceid,jdbcType=INTEGER}
+						</if>
+						<if test="productnameid != null and productnameid != ''">
+							AND a.productnameid = #{productnameid,jdbcType=INTEGER}
+						</if>
+						<if test="dosageformid != null and dosageformid != ''">
+							AND a.dosageformid = #{dosageformid,jdbcType=INTEGER}
+						</if>
+						<if test="specificationsid != null and specificationsid != ''">
+							AND a.specificationsid = #{specificationsid,jdbcType=INTEGER}
+						</if>
+						<if test="packagingid != null and yepackagingidar != ''">
+							AND a.packagingid = #{packagingid,jdbcType=INTEGER}
+						</if>
+						<if test="minimumunitid != null and minimumunitid != ''">
+							AND a.minimum_unit_id = #{minimumunitid,jdbcType=INTEGER}
+						</if>
+		 			</trim>
+		 		</where>
+		</foreach>
+	</select>
+	<!-- 结束 -->
+	
+	<!-- 查询市场Top10的销售额占比 -->
+	<select id="selectByTop10XseZb" resultMap="BaseResultMap4" parameterType="java.util.Map">
+		select a.name,a.manuTypeName,a.manuName,a.xse,(a.xse/a.value)*100 xsezb from (
+			select top 10 f.productname_ch name,c.manutypename manuTypeName,d.manuname_ch manuName,SUM(a.sales_value) xse,(
+				select SUM(a.sales_value) from medicalsalesdata a
+					left join manufacturertypeinfo c on a.manutypeid = c.manutypeid
+					left join manufacturerinfo d on a.manuid = d.manuid
+					left join province e on a.proviceid = e.provinceid
+					left join productnameinfo f on a.productnameid = f.productnameid
+					left join dosageforminfo g on a.dosageformid = g.dosageformid
+					left join specificationsinfo h on a.specificationsid = h.specificationsid
+					left join packaginginfo i on a.packagingid = i.packagingid
+					left join minimumunit j on a.minimumunitid = j.minimum_unit_id
+					left join genericnameinfo k on a.genericnameid = k.genericnameid
+					left join internationalatc1info l on a.interatc1id = l.interatc1id
+	 				left join internationalatc2info m on a.interatc2id = m.interatc2id
+	 				left join internationalatc3info n on a.interatc3id = n.interatc3id
+	 			<where>
+					<trim suffixOverrides="AND | OR">
+						<if test="year != null and year != ''">
+							AND a.sales_year = #{year,jdbcType=NVARCHAR} 
+						</if>
+						<if test="codeid != null and codeid != ''">
+							<choose>
+								<when test="atcType != null and atcType == 4">AND k.genericnameid = #{codeid,jdbcType=INTEGER}</when>
+								<when test="atcType != null and atcType == 3">AND n.interatc3id = #{codeid,jdbcType=INTEGER}</when>
+								<when test="atcType != null and atcType == 2">AND m.interatc2id = #{codeid,jdbcType=INTEGER}</when>
+								<when test="atcType != null and atcType == 1">AND l.interatc1id = #{codeid,jdbcType=INTEGER}</when>
+							</choose>
+						</if>
+						<if test="manuid != null and manuid != ''">
+							AND a.manuid = #{manuid,jdbcType=INTEGER}
+						</if>
+						<if test="manutypeid != null and manutypeid != ''">
+							AND a.manutypeid = #{manutypeid,jdbcType=INTEGER}
+						</if>
+						<if test="provinceid != null and provinceid != ''">
+							AND a.provinceid = #{provinceid,jdbcType=INTEGER}
+						</if>
+						<if test="productnameid != null and productnameid != ''">
+							AND a.productnameid = #{productnameid,jdbcType=INTEGER}
+						</if>
+						<if test="dosageformid != null and dosageformid != ''">
+							AND a.dosageformid = #{dosageformid,jdbcType=INTEGER}
+						</if>
+						<if test="specificationsid != null and specificationsid != ''">
+							AND a.specificationsid = #{specificationsid,jdbcType=INTEGER}
+						</if>
+						<if test="packagingid != null and yepackagingidar != ''">
+							AND a.packagingid = #{packagingid,jdbcType=INTEGER}
+						</if>
+						<if test="minimumunitid != null and minimumunitid != ''">
+							AND a.minimum_unit_id = #{minimumunitid,jdbcType=INTEGER}
+						</if>
+					</trim>
+				</where>
+			) value
+				from medicalsalesdata a
+					left join manufacturertypeinfo c on a.manutypeid = c.manutypeid
+					left join manufacturerinfo d on a.manuid = d.manuid
+					left join province e on a.proviceid = e.provinceid
+					left join productnameinfo f on a.productnameid = f.productnameid
+					left join dosageforminfo g on a.dosageformid = g.dosageformid
+					left join specificationsinfo h on a.specificationsid = h.specificationsid
+					left join packaginginfo i on a.packagingid = i.packagingid
+					left join minimumunit j on a.minimumunitid = j.minimum_unit_id
+					left join genericnameinfo k on a.genericnameid = k.genericnameid
+					left join internationalatc1info l on a.interatc1id = l.interatc1id
+					left join internationalatc2info m on a.interatc2id = m.interatc2id
+					left join internationalatc3info n on a.interatc3id = n.interatc3id
+			<where>
+				<trim suffixOverrides="AND | OR">
+					<if test="year != null and year != ''">
+						AND a.sales_year = #{year,jdbcType=NVARCHAR} 
+					</if>
+					<if test="codeid != null and codeid != ''">
+						<choose>
+							<when test="atcType != null and atcType == 4">AND k.genericnameid = #{codeid,jdbcType=INTEGER}</when>
+							<when test="atcType != null and atcType == 3">AND n.interatc3id = #{codeid,jdbcType=INTEGER}</when>
+							<when test="atcType != null and atcType == 2">AND m.interatc2id = #{codeid,jdbcType=INTEGER}</when>
+							<when test="atcType != null and atcType == 1">AND l.interatc1id = #{codeid,jdbcType=INTEGER}</when>
+						</choose>
+					</if>
+					<if test="manuid != null and manuid != ''">
+						AND a.manuid = #{manuid,jdbcType=INTEGER}
+					</if>
+					<if test="manutypeid != null and manutypeid != ''">
+						AND a.manutypeid = #{manutypeid,jdbcType=INTEGER}
+					</if>
+					<if test="provinceid != null and provinceid != ''">
+						AND a.provinceid = #{provinceid,jdbcType=INTEGER}
+					</if>
+					<if test="productnameid != null and productnameid != ''">
+						AND a.productnameid = #{productnameid,jdbcType=INTEGER}
+					</if>
+					<if test="dosageformid != null and dosageformid != ''">
+						AND a.dosageformid = #{dosageformid,jdbcType=INTEGER}
+					</if>
+					<if test="specificationsid != null and specificationsid != ''">
+						AND a.specificationsid = #{specificationsid,jdbcType=INTEGER}
+					</if>
+					<if test="packagingid != null and yepackagingidar != ''">
+						AND a.packagingid = #{packagingid,jdbcType=INTEGER}
+					</if>
+					<if test="minimumunitid != null and minimumunitid != ''">
+						AND a.minimum_unit_id = #{minimumunitid,jdbcType=INTEGER}
+					</if>
+				</trim>
+			</where>
+			<trim prefix="group by">
+			 f.productname_ch,c.manutypename,d.manuname_ch<!-- ,a.sales_year -->			
+			</trim>
+			<trim prefix="order by">
+				xse desc
+			</trim>
+			) a
+	</select>
+	
+	
+	<!-- 表1 开始-->
+	<select id="selectByYearGroup" resultMap="BaseResultMap5" parameterType="java.util.Map" useCache="false">
+		SELECT sales_year FROM medicalsalesdata 
+			<where>
+				<trim suffixOverrides="AND | OR">
+					<if test="timeEnd != null and timeEnd != ''">
+						AND sales_year between #{timeBegin,jdbcType=NVARCHAR} 
+						AND #{timeEnd,jdbcType=NVARCHAR}
+					</if>
+				</trim>
+			</where>
+			<trim prefix="GROUP BY">
+				sales_year
+			</trim>
+			<trim prefix="ORDER BY">
+				sales_year
+			</trim>
+	</select>
+	
+	<select id="selectTop10ListDataOne" resultMap="BaseResultMap5" parameterType="java.util.Map">
+		WITH
+		<foreach item="item" index="index" collection="timeList" separator=","><!-- 当Map里有List集合的时候 collection=“你Map的Key” -->
+			<choose>
+				<when test="timeListlength != 0">
+					<choose>
+						<when test="index == timeListlength">
+							tempTable${index} AS (
+								SELECT top 10 a.sales_year,d.manuname_ch,c.manutypename,
+										 COUNT(distinct j.minimum_unit_ch) minimumCount,
+										 CONVERT(decimal(18, 9),(CONVERT(decimal(18, 0),SUM(a.sales_value)) / CONVERT(decimal(18, 0),(
+											SELECT SUM(a.sales_value)
+												FROM medicalsalesdata a
+												LEFT JOIN manufacturertypeinfo c ON a.manutypeid = c.manutypeid
+												LEFT JOIN manufacturerinfo d ON a.manuid = d.manuid
+												LEFT JOIN province e ON a.proviceid = e.provinceid
+												LEFT JOIN productnameinfo f ON a.productnameid = f.productnameid
+												LEFT JOIN dosageforminfo g ON a.dosageformid = g.dosageformid
+												LEFT JOIN specificationsinfo h ON a.specificationsid = h.specificationsid
+												LEFT JOIN packaginginfo i ON a.packagingid = i.packagingid
+												LEFT JOIN minimumunit j ON a.minimumunitid = j.minimum_unit_id
+												LEFT JOIN genericnameinfo k ON a.genericnameid = k.genericnameid
+												LEFT JOIN internationalatc1info l ON a.interatc1id = l.interatc1id
+												LEFT JOIN internationalatc2info m ON a.interatc2id = m.interatc2id
+												LEFT JOIN internationalatc3info n on a.interatc3id = n.interatc3id
+												<where>
+													<trim suffixOverrides="AND | OR">
+														<if test="year != null and year != ''">
+															AND a.sales_year = #{item} 
+														</if>
+														<if test="codeid != null and codeid != ''">
+															<choose>
+																<when test="atcType != null and atcType == 4">AND k.genericnameid = #{codeid,jdbcType=INTEGER}</when>
+																<when test="atcType != null and atcType == 3">AND n.interatc3id = #{codeid,jdbcType=INTEGER}</when>
+																<when test="atcType != null and atcType == 2">AND m.interatc2id = #{codeid,jdbcType=INTEGER}</when>
+																<when test="atcType != null and atcType == 1">AND l.interatc1id = #{codeid,jdbcType=INTEGER}</when>
+															</choose>
+														</if>
+														<if test="manuid != null and manuid != ''">
+															AND a.manuid = #{manuid,jdbcType=INTEGER}
+														</if>
+														<if test="manutypeid != null and manutypeid != ''">
+															AND a.manutypeid = #{manutypeid,jdbcType=INTEGER}
+														</if>
+														<if test="provinceid != null and provinceid != ''">
+															AND a.provinceid = #{provinceid,jdbcType=INTEGER}
+														</if>
+														<if test="productnameid != null and productnameid != ''">
+															AND a.productnameid = #{productnameid,jdbcType=INTEGER}
+														</if>
+														<if test="dosageformid != null and dosageformid != ''">
+															AND a.dosageformid = #{dosageformid,jdbcType=INTEGER}
+														</if>
+														<if test="specificationsid != null and specificationsid != ''">
+															AND a.specificationsid = #{specificationsid,jdbcType=INTEGER}
+														</if>
+														<if test="packagingid != null and yepackagingidar != ''">
+															AND a.packagingid = #{packagingid,jdbcType=INTEGER}
+														</if>
+														<if test="minimumunitid != null and minimumunitid != ''">
+															AND a.minimum_unit_id = #{minimumunitid,jdbcType=INTEGER}
+														</if>
+													</trim>
+												</where>
+										))) *100) scfezb,
+											CONVERT(decimal(18, 13),((CONVERT(decimal(18, 0),SUM(a.sales_value))-CONVERT(decimal(18, 0),o.xse))/CONVERT(decimal(18, 0),o.xse)))*100 xsezzl
+										FROM medicalsalesdata a
+										LEFT JOIN manufacturertypeinfo c ON a.manutypeid = c.manutypeid
+										LEFT JOIN manufacturerinfo d ON a.manuid = d.manuid
+										LEFT JOIN province e ON a.proviceid = e.provinceid
+										LEFT JOIN productnameinfo f ON a.productnameid = f.productnameid
+										LEFT JOIN dosageforminfo g ON a.dosageformid = g.dosageformid
+										LEFT JOIN specificationsinfo h ON a.specificationsid = h.specificationsid
+										LEFT JOIN packaginginfo i ON a.packagingid = i.packagingid
+										LEFT JOIN minimumunit j ON a.minimumunitid = j.minimum_unit_id
+										LEFT JOIN genericnameinfo k ON a.genericnameid = k.genericnameid
+										LEFT JOIN internationalatc1info l ON a.interatc1id = l.interatc1id
+										LEFT JOIN internationalatc2info m ON a.interatc2id = m.interatc2id
+										LEFT JOIN internationalatc3info n on a.interatc3id = n.interatc3id
+										LEFT JOIN (
+											SELECT TOP 10 d.manuname_ch,SUM(a.sales_value) xse
+												FROM medicalsalesdata a
+												LEFT JOIN manufacturertypeinfo c ON a.manutypeid = c.manutypeid
+												LEFT JOIN manufacturerinfo d ON a.manuid = d.manuid
+												LEFT JOIN province e ON a.proviceid = e.provinceid
+												LEFT JOIN productnameinfo f ON a.productnameid = f.productnameid
+												LEFT JOIN dosageforminfo g ON a.dosageformid = g.dosageformid
+												LEFT JOIN specificationsinfo h ON a.specificationsid = h.specificationsid
+												LEFT JOIN packaginginfo i ON a.packagingid = i.packagingid
+												LEFT JOIN minimumunit j ON a.minimumunitid = j.minimum_unit_id
+												LEFT JOIN genericnameinfo k ON a.genericnameid = k.genericnameid
+												LEFT JOIN internationalatc1info l ON a.interatc1id = l.interatc1id
+												LEFT JOIN internationalatc2info m ON a.interatc2id = m.interatc2id
+												LEFT JOIN internationalatc3info n on a.interatc3id = n.interatc3id
+												<where>
+													<trim suffixOverrides="AND | OR">
+														<if test="year != null and year != ''">
+															AND a.sales_year = #{item}-1
+														</if>
+														<if test="codeid != null and codeid != ''">
+															<choose>
+																<when test="atcType != null and atcType == 4">AND k.genericnameid = #{codeid,jdbcType=INTEGER}</when>
+																<when test="atcType != null and atcType == 3">AND n.interatc3id = #{codeid,jdbcType=INTEGER}</when>
+																<when test="atcType != null and atcType == 2">AND m.interatc2id = #{codeid,jdbcType=INTEGER}</when>
+																<when test="atcType != null and atcType == 1">AND l.interatc1id = #{codeid,jdbcType=INTEGER}</when>
+															</choose>
+														</if>
+														<if test="manuid != null and manuid != ''">
+															AND a.manuid = #{manuid,jdbcType=INTEGER}
+														</if>
+														<if test="manutypeid != null and manutypeid != ''">
+															AND a.manutypeid = #{manutypeid,jdbcType=INTEGER}
+														</if>
+														<if test="provinceid != null and provinceid != ''">
+															AND a.provinceid = #{provinceid,jdbcType=INTEGER}
+														</if>
+														<if test="productnameid != null and productnameid != ''">
+															AND a.productnameid = #{productnameid,jdbcType=INTEGER}
+														</if>
+														<if test="dosageformid != null and dosageformid != ''">
+															AND a.dosageformid = #{dosageformid,jdbcType=INTEGER}
+														</if>
+														<if test="specificationsid != null and specificationsid != ''">
+															AND a.specificationsid = #{specificationsid,jdbcType=INTEGER}
+														</if>
+														<if test="packagingid != null and yepackagingidar != ''">
+															AND a.packagingid = #{packagingid,jdbcType=INTEGER}
+														</if>
+														<if test="minimumunitid != null and minimumunitid != ''">
+															AND a.minimum_unit_id = #{minimumunitid,jdbcType=INTEGER}
+														</if>
+													</trim>
+												</where>
+											GROUP BY d.manuname_ch
+											ORDER BY xse DESC
+										) o on d.manuname_ch = o.manuname_ch
+									<where>
+										<trim suffixOverrides="AND | OR">
+											<if test="year != null and year != ''">
+												AND a.sales_year = #{item}
+											</if>
+											<if test="codeid != null and codeid != ''">
+												<choose>
+													<when test="atcType != null and atcType == 4">AND k.genericnameid = #{codeid,jdbcType=INTEGER}</when>
+													<when test="atcType != null and atcType == 3">AND n.interatc3id = #{codeid,jdbcType=INTEGER}</when>
+													<when test="atcType != null and atcType == 2">AND m.interatc2id = #{codeid,jdbcType=INTEGER}</when>
+													<when test="atcType != null and atcType == 1">AND l.interatc1id = #{codeid,jdbcType=INTEGER}</when>
+												</choose>
+											</if>
+											<if test="manuid != null and manuid != ''">
+												AND a.manuid = #{manuid,jdbcType=INTEGER}
+											</if>
+											<if test="manutypeid != null and manutypeid != ''">
+												AND a.manutypeid = #{manutypeid,jdbcType=INTEGER}
+											</if>
+											<if test="provinceid != null and provinceid != ''">
+												AND a.provinceid = #{provinceid,jdbcType=INTEGER}
+											</if>
+											<if test="productnameid != null and productnameid != ''">
+												AND a.productnameid = #{productnameid,jdbcType=INTEGER}
+											</if>
+											<if test="dosageformid != null and dosageformid != ''">
+												AND a.dosageformid = #{dosageformid,jdbcType=INTEGER}
+											</if>
+											<if test="specificationsid != null and specificationsid != ''">
+												AND a.specificationsid = #{specificationsid,jdbcType=INTEGER}
+											</if>
+											<if test="packagingid != null and yepackagingidar != ''">
+												AND a.packagingid = #{packagingid,jdbcType=INTEGER}
+											</if>
+											<if test="minimumunitid != null and minimumunitid != ''">
+												AND a.minimum_unit_id = #{minimumunitid,jdbcType=INTEGER}
+											</if>
+										</trim>
+									</where>
+							GROUP BY d.manuname_ch,a.sales_year,c.manutypename,o.xse
+							ORDER BY scfezb DESC
+						)
+						</when>
+						<otherwise>
+							tempTable${index} AS(
+								SELECT top 10 a.sales_year,d.manuname_ch,
+										 CONVERT(decimal(18, 9),(CONVERT(decimal(18, 0),SUM(a.sales_value)) / CONVERT(decimal(18, 0),(
+											SELECT SUM(a.sales_value)
+												FROM medicalsalesdata a
+												LEFT JOIN manufacturertypeinfo c ON a.manutypeid = c.manutypeid
+												LEFT JOIN manufacturerinfo d ON a.manuid = d.manuid
+												LEFT JOIN province e ON a.proviceid = e.provinceid
+												LEFT JOIN productnameinfo f ON a.productnameid = f.productnameid
+												LEFT JOIN dosageforminfo g ON a.dosageformid = g.dosageformid
+												LEFT JOIN specificationsinfo h ON a.specificationsid = h.specificationsid
+												LEFT JOIN packaginginfo i ON a.packagingid = i.packagingid
+												LEFT JOIN minimumunit j ON a.minimumunitid = j.minimum_unit_id
+												LEFT JOIN genericnameinfo k ON a.genericnameid = k.genericnameid
+												LEFT JOIN internationalatc1info l ON a.interatc1id = l.interatc1id
+												LEFT JOIN internationalatc2info m ON a.interatc2id = m.interatc2id
+												LEFT JOIN internationalatc3info n on a.interatc3id = n.interatc3id
+												<where>
+													<trim suffixOverrides="AND | OR">
+														<if test="year != null and year != ''">
+															AND a.sales_year = #{item}
+														</if>
+														<if test="codeid != null and codeid != ''">
+															<choose>
+																<when test="atcType != null and atcType == 4">AND k.genericnameid = #{codeid,jdbcType=INTEGER}</when>
+																<when test="atcType != null and atcType == 3">AND n.interatc3id = #{codeid,jdbcType=INTEGER}</when>
+																<when test="atcType != null and atcType == 2">AND m.interatc2id = #{codeid,jdbcType=INTEGER}</when>
+																<when test="atcType != null and atcType == 1">AND l.interatc1id = #{codeid,jdbcType=INTEGER}</when>
+															</choose>
+														</if>
+														<if test="manuid != null and manuid != ''">
+															AND a.manuid = #{manuid,jdbcType=INTEGER}
+														</if>
+														<if test="manutypeid != null and manutypeid != ''">
+															AND a.manutypeid = #{manutypeid,jdbcType=INTEGER}
+														</if>
+														<if test="provinceid != null and provinceid != ''">
+															AND a.provinceid = #{provinceid,jdbcType=INTEGER}
+														</if>
+														<if test="productnameid != null and productnameid != ''">
+															AND a.productnameid = #{productnameid,jdbcType=INTEGER}
+														</if>
+														<if test="dosageformid != null and dosageformid != ''">
+															AND a.dosageformid = #{dosageformid,jdbcType=INTEGER}
+														</if>
+														<if test="specificationsid != null and specificationsid != ''">
+															AND a.specificationsid = #{specificationsid,jdbcType=INTEGER}
+														</if>
+														<if test="packagingid != null and yepackagingidar != ''">
+															AND a.packagingid = #{packagingid,jdbcType=INTEGER}
+														</if>
+														<if test="minimumunitid != null and minimumunitid != ''">
+															AND a.minimum_unit_id = #{minimumunitid,jdbcType=INTEGER}
+														</if>
+													</trim>
+												</where>
+										)))*100) scfezb
+										FROM medicalsalesdata a
+										LEFT JOIN manufacturertypeinfo c ON a.manutypeid = c.manutypeid
+										LEFT JOIN manufacturerinfo d ON a.manuid = d.manuid
+										LEFT JOIN province e ON a.proviceid = e.provinceid
+										LEFT JOIN productnameinfo f ON a.productnameid = f.productnameid
+										LEFT JOIN dosageforminfo g ON a.dosageformid = g.dosageformid
+										LEFT JOIN specificationsinfo h ON a.specificationsid = h.specificationsid
+										LEFT JOIN packaginginfo i ON a.packagingid = i.packagingid
+										LEFT JOIN minimumunit j ON a.minimumunitid = j.minimum_unit_id
+										LEFT JOIN genericnameinfo k ON a.genericnameid = k.genericnameid
+										LEFT JOIN internationalatc1info l ON a.interatc1id = l.interatc1id
+										LEFT JOIN internationalatc2info m ON a.interatc2id = m.interatc2id
+										LEFT JOIN internationalatc3info n on a.interatc3id = n.interatc3id
+										<where>
+											<trim suffixOverrides="AND | OR">
+												<if test="year != null and year != ''">
+													AND a.sales_year = #{item}
+												</if>
+												<if test="codeid != null and codeid != ''">
+													<choose>
+														<when test="atcType != null and atcType == 4">AND k.genericnameid = #{codeid,jdbcType=INTEGER}</when>
+														<when test="atcType != null and atcType == 3">AND n.interatc3id = #{codeid,jdbcType=INTEGER}</when>
+														<when test="atcType != null and atcType == 2">AND m.interatc2id = #{codeid,jdbcType=INTEGER}</when>
+														<when test="atcType != null and atcType == 1">AND l.interatc1id = #{codeid,jdbcType=INTEGER}</when>
+													</choose>
+												</if>
+												<if test="manuid != null and manuid != ''">
+													AND a.manuid = #{manuid,jdbcType=INTEGER}
+												</if>
+												<if test="manutypeid != null and manutypeid != ''">
+													AND a.manutypeid = #{manutypeid,jdbcType=INTEGER}
+												</if>
+												<if test="provinceid != null and provinceid != ''">
+													AND a.provinceid = #{provinceid,jdbcType=INTEGER}
+												</if>
+												<if test="productnameid != null and productnameid != ''">
+													AND a.productnameid = #{productnameid,jdbcType=INTEGER}
+												</if>
+												<if test="dosageformid != null and dosageformid != ''">
+													AND a.dosageformid = #{dosageformid,jdbcType=INTEGER}
+												</if>
+												<if test="specificationsid != null and specificationsid != ''">
+													AND a.specificationsid = #{specificationsid,jdbcType=INTEGER}
+												</if>
+												<if test="packagingid != null and yepackagingidar != ''">
+													AND a.packagingid = #{packagingid,jdbcType=INTEGER}
+												</if>
+												<if test="minimumunitid != null and minimumunitid != ''">
+													AND a.minimum_unit_id = #{minimumunitid,jdbcType=INTEGER}
+												</if>
+											</trim>
+										</where>
+							GROUP BY d.manuname_ch,a.sales_year
+							ORDER BY scfezb DESC
+						)
+						</otherwise>
+					</choose>
+				</when>
+				<otherwise>
+					tempTable${index} AS (
+							SELECT top 10 a.sales_year,d.manuname_ch,c.manutypename,
+									 COUNT(distinct j.minimum_unit_ch) minimumCount,
+									 CONVERT(decimal(18, 9),(CONVERT(decimal(18, 0),SUM(a.sales_value)) / CONVERT(decimal(18, 0),(
+										SELECT SUM(a.sales_value)
+											FROM medicalsalesdata a
+											LEFT JOIN manufacturertypeinfo c ON a.manutypeid = c.manutypeid
+											LEFT JOIN manufacturerinfo d ON a.manuid = d.manuid
+											LEFT JOIN province e ON a.proviceid = e.provinceid
+											LEFT JOIN productnameinfo f ON a.productnameid = f.productnameid
+											LEFT JOIN dosageforminfo g ON a.dosageformid = g.dosageformid
+											LEFT JOIN specificationsinfo h ON a.specificationsid = h.specificationsid
+											LEFT JOIN packaginginfo i ON a.packagingid = i.packagingid
+											LEFT JOIN minimumunit j ON a.minimumunitid = j.minimum_unit_id
+											LEFT JOIN genericnameinfo k ON a.genericnameid = k.genericnameid
+											LEFT JOIN internationalatc1info l ON a.interatc1id = l.interatc1id
+											LEFT JOIN internationalatc2info m ON a.interatc2id = m.interatc2id
+											LEFT JOIN internationalatc3info n on a.interatc3id = n.interatc3id
+											<where>
+												<trim suffixOverrides="AND | OR">
+													<if test="year != null and year != ''">
+														AND a.sales_year = #{item} 
+													</if>
+													<if test="codeid != null and codeid != ''">
+														<choose>
+															<when test="atcType != null and atcType == 4">AND k.genericnameid = #{codeid,jdbcType=INTEGER}</when>
+															<when test="atcType != null and atcType == 3">AND n.interatc3id = #{codeid,jdbcType=INTEGER}</when>
+															<when test="atcType != null and atcType == 2">AND m.interatc2id = #{codeid,jdbcType=INTEGER}</when>
+															<when test="atcType != null and atcType == 1">AND l.interatc1id = #{codeid,jdbcType=INTEGER}</when>
+														</choose>
+													</if>
+													<if test="manuid != null and manuid != ''">
+														AND a.manuid = #{manuid,jdbcType=INTEGER}
+													</if>
+													<if test="manutypeid != null and manutypeid != ''">
+														AND a.manutypeid = #{manutypeid,jdbcType=INTEGER}
+													</if>
+													<if test="provinceid != null and provinceid != ''">
+														AND a.provinceid = #{provinceid,jdbcType=INTEGER}
+													</if>
+													<if test="productnameid != null and productnameid != ''">
+														AND a.productnameid = #{productnameid,jdbcType=INTEGER}
+													</if>
+													<if test="dosageformid != null and dosageformid != ''">
+														AND a.dosageformid = #{dosageformid,jdbcType=INTEGER}
+													</if>
+													<if test="specificationsid != null and specificationsid != ''">
+														AND a.specificationsid = #{specificationsid,jdbcType=INTEGER}
+													</if>
+													<if test="packagingid != null and yepackagingidar != ''">
+														AND a.packagingid = #{packagingid,jdbcType=INTEGER}
+													</if>
+													<if test="minimumunitid != null and minimumunitid != ''">
+														AND a.minimum_unit_id = #{minimumunitid,jdbcType=INTEGER}
+													</if>
+												</trim>
+											</where>
+									))) *100) scfezb,
+										CONVERT(decimal(18, 13),((CONVERT(decimal(18, 0),SUM(a.sales_value))-CONVERT(decimal(18, 0),o.xse))/CONVERT(decimal(18, 0),o.xse)))*100 xsezzl
+									FROM medicalsalesdata a
+									LEFT JOIN manufacturertypeinfo c ON a.manutypeid = c.manutypeid
+									LEFT JOIN manufacturerinfo d ON a.manuid = d.manuid
+									LEFT JOIN province e ON a.proviceid = e.provinceid
+									LEFT JOIN productnameinfo f ON a.productnameid = f.productnameid
+									LEFT JOIN dosageforminfo g ON a.dosageformid = g.dosageformid
+									LEFT JOIN specificationsinfo h ON a.specificationsid = h.specificationsid
+									LEFT JOIN packaginginfo i ON a.packagingid = i.packagingid
+									LEFT JOIN minimumunit j ON a.minimumunitid = j.minimum_unit_id
+									LEFT JOIN genericnameinfo k ON a.genericnameid = k.genericnameid
+									LEFT JOIN internationalatc1info l ON a.interatc1id = l.interatc1id
+									LEFT JOIN internationalatc2info m ON a.interatc2id = m.interatc2id
+									LEFT JOIN internationalatc3info n on a.interatc3id = n.interatc3id
+									LEFT JOIN (
+										SELECT TOP 10 d.manuname_ch,SUM(a.sales_value) xse
+											FROM medicalsalesdata a
+											LEFT JOIN manufacturertypeinfo c ON a.manutypeid = c.manutypeid
+											LEFT JOIN manufacturerinfo d ON a.manuid = d.manuid
+											LEFT JOIN province e ON a.proviceid = e.provinceid
+											LEFT JOIN productnameinfo f ON a.productnameid = f.productnameid
+											LEFT JOIN dosageforminfo g ON a.dosageformid = g.dosageformid
+											LEFT JOIN specificationsinfo h ON a.specificationsid = h.specificationsid
+											LEFT JOIN packaginginfo i ON a.packagingid = i.packagingid
+											LEFT JOIN minimumunit j ON a.minimumunitid = j.minimum_unit_id
+											LEFT JOIN genericnameinfo k ON a.genericnameid = k.genericnameid
+											LEFT JOIN internationalatc1info l ON a.interatc1id = l.interatc1id
+											LEFT JOIN internationalatc2info m ON a.interatc2id = m.interatc2id
+											LEFT JOIN internationalatc3info n on a.interatc3id = n.interatc3id
+											<where>
+												<trim suffixOverrides="AND | OR">
+													<if test="year != null and year != ''">
+														AND a.sales_year = #{item}-1
+													</if>
+													<if test="codeid != null and codeid != ''">
+														<choose>
+															<when test="atcType != null and atcType == 4">AND k.genericnameid = #{codeid,jdbcType=INTEGER}</when>
+															<when test="atcType != null and atcType == 3">AND n.interatc3id = #{codeid,jdbcType=INTEGER}</when>
+															<when test="atcType != null and atcType == 2">AND m.interatc2id = #{codeid,jdbcType=INTEGER}</when>
+															<when test="atcType != null and atcType == 1">AND l.interatc1id = #{codeid,jdbcType=INTEGER}</when>
+														</choose>
+													</if>
+													<if test="manuid != null and manuid != ''">
+														AND a.manuid = #{manuid,jdbcType=INTEGER}
+													</if>
+													<if test="manutypeid != null and manutypeid != ''">
+														AND a.manutypeid = #{manutypeid,jdbcType=INTEGER}
+													</if>
+													<if test="provinceid != null and provinceid != ''">
+														AND a.provinceid = #{provinceid,jdbcType=INTEGER}
+													</if>
+													<if test="productnameid != null and productnameid != ''">
+														AND a.productnameid = #{productnameid,jdbcType=INTEGER}
+													</if>
+													<if test="dosageformid != null and dosageformid != ''">
+														AND a.dosageformid = #{dosageformid,jdbcType=INTEGER}
+													</if>
+													<if test="specificationsid != null and specificationsid != ''">
+														AND a.specificationsid = #{specificationsid,jdbcType=INTEGER}
+													</if>
+													<if test="packagingid != null and yepackagingidar != ''">
+														AND a.packagingid = #{packagingid,jdbcType=INTEGER}
+													</if>
+													<if test="minimumunitid != null and minimumunitid != ''">
+														AND a.minimum_unit_id = #{minimumunitid,jdbcType=INTEGER}
+													</if>
+												</trim>
+											</where>
+										GROUP BY d.manuname_ch
+										ORDER BY xse DESC
+									) o on d.manuname_ch = o.manuname_ch
+									<where>
+										<trim suffixOverrides="AND | OR">
+											<if test="year != null and year != ''">
+												AND a.sales_year = #{item}
+											</if>
+											<if test="codeid != null and codeid != ''">
+												<choose>
+													<when test="atcType != null and atcType == 4">AND k.genericnameid = #{codeid,jdbcType=INTEGER}</when>
+													<when test="atcType != null and atcType == 3">AND n.interatc3id = #{codeid,jdbcType=INTEGER}</when>
+													<when test="atcType != null and atcType == 2">AND m.interatc2id = #{codeid,jdbcType=INTEGER}</when>
+													<when test="atcType != null and atcType == 1">AND l.interatc1id = #{codeid,jdbcType=INTEGER}</when>
+												</choose>
+											</if>
+											<if test="manuid != null and manuid != ''">
+												AND a.manuid = #{manuid,jdbcType=INTEGER}
+											</if>
+											<if test="manutypeid != null and manutypeid != ''">
+												AND a.manutypeid = #{manutypeid,jdbcType=INTEGER}
+											</if>
+											<if test="provinceid != null and provinceid != ''">
+												AND a.provinceid = #{provinceid,jdbcType=INTEGER}
+											</if>
+											<if test="productnameid != null and productnameid != ''">
+												AND a.productnameid = #{productnameid,jdbcType=INTEGER}
+											</if>
+											<if test="dosageformid != null and dosageformid != ''">
+												AND a.dosageformid = #{dosageformid,jdbcType=INTEGER}
+											</if>
+											<if test="specificationsid != null and specificationsid != ''">
+												AND a.specificationsid = #{specificationsid,jdbcType=INTEGER}
+											</if>
+											<if test="packagingid != null and yepackagingidar != ''">
+												AND a.packagingid = #{packagingid,jdbcType=INTEGER}
+											</if>
+											<if test="minimumunitid != null and minimumunitid != ''">
+												AND a.minimum_unit_id = #{minimumunitid,jdbcType=INTEGER}
+											</if>
+										</trim>
+									</where>
+						GROUP BY d.manuname_ch,a.sales_year,c.manutypename,o.xse
+						ORDER BY scfezb DESC
+					)
+				</otherwise>
+			</choose>
+		</foreach>
+		<choose>
+			<when test="timeListlength != null and timeListlength >= '2'">
+				SELECT a.sales_year lastyear,a.manuname_ch,a.manutypename,a.minimumCount,
+					 c.sales_year fristyear,c.scfezb fristscfezb,
+					 b.sales_year middleyear,b.scfezb middlescfezb,
+					 a.scfezb lastscfezb,
+					 a.xsezzl
+				FROM 
+				tempTable2 a JOIN tempTable1 b ON a.manuname_ch = b.manuname_ch JOIN tempTable0 c ON a.manuname_ch = c.manuname_ch
+				order by a.scfezb desc
+			</when>
+			<otherwise>
+				SELECT
+					b.manuname_ch,b.manutypename,b.minimumCount,
+					c.sales_year fristyear,
+					c.scfezb fristscfezb,
+					b.sales_year lastyear,
+					b.scfezb lastscfezb,
+					b.xsezzl
+				FROM
+				tempTable1 b 
+				left JOIN tempTable0 c ON b.manuname_ch = c.manuname_ch
+				order by b.scfezb desc
+			</otherwise>
+		</choose>
+	</select>
+	<!-- 结束 -->
+	
+	
+	<!-- <select id="selectByParameters" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select
+		<include refid="Base_Column_List" />
+		from medicalsalesdata
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from medicalsalesdata
+		where salesid = #{salesid,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from medicalsalesdata
+		where salesid = #{salesid,jdbcType=INTEGER}
+	</delete>
+	<insert id="insertSelective" parameterType="pha.com.code.report.model.MedicalSalesData">
+		insert into medicalsalesdata
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="salesid != null">
+				salesid,
+			</if>
+			<if test="salesValue != null">
+				sales_value,
+			</if>
+			<if test="unit != null">
+				unit,
+			</if>
+			<if test="descinfo != null">
+				descinfo,
+			</if>
+			<if test="manutypeid != null">
+				manutypeid,
+			</if>
+			<if test="interatc1id != null">
+				interatc1id,
+			</if>
+			<if test="interatc2id != null">
+				interatc2id,
+			</if>
+			<if test="manuid != null">
+				manuid,
+			</if>
+			<if test="genericnameid != null">
+				genericnameid,
+			</if>
+			<if test="productnameid != null">
+				productnameid,
+			</if>
+			<if test="dosageformid != null">
+				dosageformid,
+			</if>
+			<if test="specificationsid != null">
+				specificationsid,
+			</if>
+			<if test="packagingid != null">
+				packagingid,
+			</if>
+			<if test="cwmedicineid != null">
+				cwmedicineid,
+			</if>
+			<if test="proviceid != null">
+				proviceid,
+			</if>
+			<if test="minimumunitid != null">
+				minimumunitid,
+			</if>
+			<if test="salesDate != null">
+				sales_date,
+			</if>
+			<if test="salesYear != null">
+				sales_year,
+			</if>
+			<if test="salesMonth != null">
+				sales_month,
+			</if>
+			<if test="datarole != null">
+				datarole,
+			</if>
+			<if test="databaseid != null">
+				databaseid,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="salesid != null">
+				#{salesid,jdbcType=INTEGER},
+			</if>
+			<if test="salesValue != null">
+				#{salesValue,jdbcType=DECIMAL},
+			</if>
+			<if test="unit != null">
+				#{unit,jdbcType=INTEGER},
+			</if>
+			<if test="descinfo != null">
+				#{descinfo,jdbcType=NVARCHAR},
+			</if>
+			<if test="manutypeid != null">
+				#{manutypeid,jdbcType=INTEGER},
+			</if>
+			<if test="interatc1id != null">
+				#{interatc1id,jdbcType=INTEGER},
+			</if>
+			<if test="interatc2id != null">
+				#{interatc2id,jdbcType=INTEGER},
+			</if>
+			<if test="manuid != null">
+				#{manuid,jdbcType=INTEGER},
+			</if>
+			<if test="genericnameid != null">
+				#{genericnameid,jdbcType=INTEGER},
+			</if>
+			<if test="productnameid != null">
+				#{productnameid,jdbcType=INTEGER},
+			</if>
+			<if test="dosageformid != null">
+				#{dosageformid,jdbcType=INTEGER},
+			</if>
+			<if test="specificationsid != null">
+				#{specificationsid,jdbcType=INTEGER},
+			</if>
+			<if test="packagingid != null">
+				#{packagingid,jdbcType=INTEGER},
+			</if>
+			<if test="cwmedicineid != null">
+				#{cwmedicineid,jdbcType=INTEGER},
+			</if>
+			<if test="proviceid != null">
+				#{proviceid,jdbcType=INTEGER},
+			</if>
+			<if test="minimumunitid != null">
+				#{minimumunitid,jdbcType=INTEGER},
+			</if>
+			<if test="salesDate != null">
+				#{salesDate,jdbcType=NVARCHAR},
+			</if>
+			<if test="salesYear != null">
+				#{salesYear,jdbcType=NVARCHAR},
+			</if>
+			<if test="salesMonth != null">
+				#{salesMonth,jdbcType=NVARCHAR},
+			</if>
+			<if test="datarole != null">
+				#{datarole,jdbcType=NVARCHAR},
+			</if>
+			<if test="databaseid != null">
+				#{databaseid,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="pha.com.code.report.model.MedicalSalesData">
+		update medicalsalesdata
+		<set>
+			<if test="salesValue != null">
+				sales_value = #{salesValue,jdbcType=DECIMAL},
+			</if>
+			<if test="unit != null">
+				unit = #{unit,jdbcType=INTEGER},
+			</if>
+			<if test="descinfo != null">
+				descinfo = #{descinfo,jdbcType=NVARCHAR},
+			</if>
+			<if test="manutypeid != null">
+				manutypeid = #{manutypeid,jdbcType=INTEGER},
+			</if>
+			<if test="interatc1id != null">
+				interatc1id = #{interatc1id,jdbcType=INTEGER},
+			</if>
+			<if test="interatc2id != null">
+				interatc2id = #{interatc2id,jdbcType=INTEGER},
+			</if>
+			<if test="manuid != null">
+				manuid = #{manuid,jdbcType=INTEGER},
+			</if>
+			<if test="genericnameid != null">
+				genericnameid = #{genericnameid,jdbcType=INTEGER},
+			</if>
+			<if test="productnameid != null">
+				productnameid = #{productnameid,jdbcType=INTEGER},
+			</if>
+			<if test="dosageformid != null">
+				dosageformid = #{dosageformid,jdbcType=INTEGER},
+			</if>
+			<if test="specificationsid != null">
+				specificationsid = #{specificationsid,jdbcType=INTEGER},
+			</if>
+			<if test="packagingid != null">
+				packagingid = #{packagingid,jdbcType=INTEGER},
+			</if>
+			<if test="cwmedicineid != null">
+				cwmedicineid = #{cwmedicineid,jdbcType=INTEGER},
+			</if>
+			<if test="proviceid != null">
+				proviceid = #{proviceid,jdbcType=INTEGER},
+			</if>
+			<if test="minimumunitid != null">
+				minimumunitid = #{minimumunitid,jdbcType=INTEGER},
+			</if>
+			<if test="salesDate != null">
+				sales_date = #{salesDate,jdbcType=NVARCHAR},
+			</if>
+			<if test="salesYear != null">
+				sales_year = #{salesYear,jdbcType=NVARCHAR},
+			</if>
+			<if test="salesMonth != null">
+				sales_month = #{salesMonth,jdbcType=NVARCHAR},
+			</if>
+			<if test="datarole != null">
+				datarole = #{datarole,jdbcType=NVARCHAR},
+			</if>
+			<if test="databaseid != null">
+				databaseid = #{databaseid,jdbcType=INTEGER},
+			</if>
+		</set>
+		where salesid = #{salesid,jdbcType=INTEGER}
+	</update> -->
+</mapper>

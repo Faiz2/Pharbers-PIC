@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="pha.com.code.system.dao.ModuleMapper" >
+  <resultMap id="BaseResultMap" type="pha.com.code.system.model.Module" >
+    <id column="mid" property="mid" jdbcType="INTEGER" />
+    <result column="mname" property="mname" jdbcType="VARCHAR" />
+    <result column="murl" property="murl" jdbcType="VARCHAR" />
+    <result column="did" property="did" jdbcType="INTEGER" />
+    <result column="mtype" property="mtype" jdbcType="INTEGER" />
+    <result column="index_id" property="indexId" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="spare1" property="spare1" jdbcType="VARCHAR" />
+    <result column="spare2" property="spare2" jdbcType="VARCHAR" />
+    <result column="open_status" property="openStatus" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    mid, mname, murl, did, mtype, index_id, remark, spare1, spare2,open_status
+  </sql>
+  <select id="selectByID" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from module
+    where mid = #{mid,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByParameters" resultMap="BaseResultMap" parameterType="java.util.Map" >
+	    select 
+	    	<include refid="Base_Column_List" />
+	    from module
+		<trim prefix="order by">
+			index_id
+		</trim>
+  </select>
+  
+  <select id="queryAuthTree" resultMap="BaseResultMap" parameterType="java.util.Map" >
+	   select 
+		m.mid,
+		m.mname,
+		m.did,
+		m.mtype,
+		d.databasename
+		from module m 
+		inner join databaseinfo d on m.did = d.databaseid
+		<where>
+			m.open_status = 1
+		</where>
+		<trim prefix="order by">
+			m.did
+		</trim>
+  </select>
+  
+  <select id="queryCheckAuth" resultType="java.util.Map" parameterType="java.lang.Integer" >
+  	select muid,uid,mid,spare1 from moduleuser 
+		<where>
+			uid = #{userId,jdbcType=INTEGER}
+		</where>
+  </select>
+  
+  <select id="queryProvince" resultType="java.util.Map" parameterType="java.lang.Integer" >
+  	 select provinceid,provincename from province order by Convert(int,descinfo) desc
+  </select>
+  
+  <select id="queryByName" resultType="java.lang.Integer" parameterType="java.util.Map" >
+  	 select count(*) ct from module
+  	 <where>
+		<if test="mname != null">  
+	        mname = #{mname,jdbcType=VARCHAR}
+	    </if>  
+	    <if test="did != null">  
+	        and did = #{did,jdbcType=INTEGER}  
+	    </if>  
+	    <if test="mtype != null">  
+	        and mtype = #{mtype,jdbcType=INTEGER}  
+	    </if>  
+	 </where>
+  </select>
+  
+  <select id="queryCurrentlyUserAuth" resultType="java.util.Map" parameterType="java.lang.Integer" >
+  	select mu.muid, mu.uid,mu.mid, m.mname,mu.spare1 
+  		from moduleuser mu left join module m on mu.mid = m.mid
+		<where>
+			uid = #{userId,jdbcType=INTEGER}
+		</where>
+  </select>
+  
+   <delete id="deleteModuleAndUserAuth" parameterType="java.lang.Integer" >
+    delete from moduleuser 
+    where uid = #{userId,jdbcType=INTEGER}
+  </delete>
+  
+  
+  <insert id="insertModuleAndUserAuth" parameterType="java.util.Map">
+    insert into moduleuser (uid, mid,spare1)
+    values 
+    <foreach collection="listAuth" separator="," index="index" item="obj">  
+         (#{obj.userId},#{obj.checkedAuthNodes},#{obj.province})  
+     </foreach> 
+  </insert>
+  
+  
+  
+  
+  <delete id="deleteByID" parameterType="java.lang.Integer" >
+    delete from module
+    where mid = #{mid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="pha.com.code.system.model.Module" >
+    insert into module (mname, murl, 
+      did, mtype, index_id, 
+      remark, spare1, spare2
+      )
+    values (#{mid,jdbcType=INTEGER}, #{mname,jdbcType=VARCHAR}, #{murl,jdbcType=VARCHAR}, 
+      #{did,jdbcType=INTEGER}, #{mtype,jdbcType=INTEGER}, #{indexId,jdbcType=INTEGER}, 
+      #{remark,jdbcType=VARCHAR}, #{spare1,jdbcType=VARCHAR}, #{spare2,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="pha.com.code.system.model.Module" >
+    insert into module
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="mid != null" >
+        mid,
+      </if>
+      <if test="mname != null" >
+        mname,
+      </if>
+      <if test="murl != null" >
+        murl,
+      </if>
+      <if test="did != null" >
+        did,
+      </if>
+      <if test="mtype != null" >
+        mtype,
+      </if>
+      <if test="indexId != null" >
+        index_id,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="spare1 != null" >
+        spare1,
+      </if>
+      <if test="spare2 != null" >
+        spare2,
+      </if>
+      <if test="openStatus != null" >
+        open_status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="mid != null" >
+        #{mid,jdbcType=INTEGER},
+      </if>
+      <if test="mname != null" >
+        #{mname,jdbcType=VARCHAR},
+      </if>
+      <if test="murl != null" >
+        #{murl,jdbcType=VARCHAR},
+      </if>
+      <if test="did != null" >
+        #{did,jdbcType=INTEGER},
+      </if>
+      <if test="mtype != null" >
+        #{mtype,jdbcType=INTEGER},
+      </if>
+      <if test="indexId != null" >
+        #{indexId,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="spare1 != null" >
+        #{spare1,jdbcType=VARCHAR},
+      </if>
+      <if test="spare2 != null" >
+        #{spare2,jdbcType=VARCHAR},
+      </if>
+      <if test="openStatus != null" >
+        #{openStatus,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByIDSelective" parameterType="pha.com.code.system.model.Module" >
+    update module
+    <set >
+      <if test="mname != null" >
+        mname = #{mname,jdbcType=VARCHAR},
+      </if>
+      <if test="murl != null" >
+        murl = #{murl,jdbcType=VARCHAR},
+      </if>
+      <if test="did != null" >
+        did = #{did,jdbcType=INTEGER},
+      </if>
+      <if test="mtype != null" >
+        mtype = #{mtype,jdbcType=INTEGER},
+      </if>
+      <if test="indexId != null" >
+        index_id = #{indexId,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="spare1 != null" >
+        spare1 = #{spare1,jdbcType=VARCHAR},
+      </if>
+      <if test="spare2 != null" >
+        spare2 = #{spare2,jdbcType=VARCHAR},
+      </if>
+      <if test="openStatus != null" >
+        open_status = #{openStatus,jdbcType=INTEGER},
+      </if>
+    </set>
+    where mid = #{mid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByID" parameterType="pha.com.code.system.model.Module" >
+    update module
+    set mname = #{mname,jdbcType=VARCHAR},
+      murl = #{murl,jdbcType=VARCHAR},
+      did = #{did,jdbcType=INTEGER},
+      mtype = #{mtype,jdbcType=INTEGER},
+      index_id = #{indexId,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR},
+      spare1 = #{spare1,jdbcType=VARCHAR},
+      spare2 = #{spare2,jdbcType=VARCHAR},
+      open_status = #{openStatus,jdbcType=INTEGER}
+    where mid = #{mid,jdbcType=INTEGER}
+  </update>
+</mapper>

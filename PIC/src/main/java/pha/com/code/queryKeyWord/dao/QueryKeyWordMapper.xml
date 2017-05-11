@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="pha.com.code.queryKeyWord.dao.QueryKeyWordMapper">
+	<resultMap id="BaseResultMap" type="pha.com.code.queryKeyWord.model.QueryKeyWord">
+		<result column="databasename" property="databasename" jdbcType="NVARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		b.databasename
+	</sql>
+	<!-- 根据关键词搜索数据库 -->
+	<select id="queryByKeyWord" resultMap="BaseResultMap"
+		parameterType="java.util.Map" statementType="STATEMENT">
+		select
+		distinct
+		<include refid="Base_Column_List" />
+		from medicalsalesdata a
+		join databaseinfo b on a.databaseid = b.databaseid
+		join manufacturertypeinfo c on a.manutypeid = c.manutypeid
+		join manufacturerinfo d on a.manuid = d.manuid
+		join province e on a.proviceid = e.provinceid
+		join productnameinfo f on a.productnameid = f.productnameid
+		join dosageforminfo g on a.dosageformid = g.dosageformid
+		join specificationsinfo h on a.specificationsid = h.specificationsid
+		join packaginginfo i on a.packagingid = i.packagingid
+		join minimumunit j on a.minimumunitid = j.minimum_unit_id
+		join molecule k on a.moleculeid = k.moleculeid
+		<where>
+			<trim suffixOverrides="AND | OR">
+				<if test="keyWord != null and keyWord != ''">
+					or contains(b.databasename,'"*${keyWord}*"')
+					or contains(c.manutypename,'"*${keyWord}*"')
+					or contains(d.manuname_ch,'"*${keyWord}*"')
+					or contains(e.provincename,'"*${keyWord}*"')
+					or contains(f.productname_ch,'"*${keyWord}*"')
+					or contains(g.dosageformname,'"*${keyWord}*"')
+					or contains(h.specificationsname,'"*${keyWord}*"')
+					or contains(i.packagingname,'"*${keyWord}*"')
+					or contains(k.molecule_ch,'"*${keyWord}*"')
+				</if><!-- #{keyWord,jdbcType=NVARCHAR} -->
+
+			</trim>
+		</where>
+	</select>
+</mapper>

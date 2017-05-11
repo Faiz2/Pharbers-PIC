@@ -1,0 +1,353 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>dataCenter</groupId>
+	<artifactId>dataCenter</artifactId>
+	<packaging>war</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>dataCenter Maven Webapp</name>
+	<url>http://maven.apache.org</url>
+	<properties>
+        <project.deploy>deploy</project.deploy>
+        <project.tomcat.version>8.0.0-RC5</project.tomcat.version>
+		<!-- 项目名字 -->
+		<finalName>dataCenter</finalName>
+		<!-- spring版本号 -->
+		<spring.version>4.2.6.RELEASE</spring.version><!-- 4.0.2.RELEASE 4.2.6.RELEAS-->
+		<!-- mybatis版本号  3.2.8 3.1.1-->
+		<mybatis.version>3.2.8</mybatis.version>
+		<!-- log4j日志文件管理包版本 -->
+		<slf4j.version>1.7.7</slf4j.version>
+		<log4j.version>1.2.17</log4j.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<!-- 表示开发的时候引入，发布的时候不会加载此包 -->
+			<scope>test</scope>
+		</dependency>
+		<!-- spring核心包 -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-oxm</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<!-- mybatis核心包 -->
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis</artifactId>
+			<version>${mybatis.version}</version> 
+		</dependency>
+		<!-- mybatis/spring包 -->
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis-spring</artifactId>
+			<version>1.2.2</version>
+		</dependency>
+		<!-- 导入java ee jar 包 -->
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-api</artifactId>
+			<version>7.0</version>
+		</dependency>
+		<!-- 导入dbcp的jar包，用来在applicationContext.xml中配置数据库 -->
+		<dependency>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+			<version>1.2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
+		</dependency>
+		<dependency>
+		    <groupId>commons-httpclient</groupId>
+		    <artifactId>commons-httpclient</artifactId>
+		    <version>3.1</version>
+		</dependency>
+		<!-- SqlServer2008 R2 -->
+		<dependency>
+			<groupId>com.microsoft.sqlserver</groupId>
+			<artifactId>sqljdbc4</artifactId>
+			<version>4.0</version>
+		</dependency>
+		<!-- JSTL标签类 -->
+		<dependency>
+			<groupId>jstl</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
+		<!-- 日志文件管理包 -->
+		<!-- log start -->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+
+
+		<!-- 格式化对象，方便输出日志 -->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.2.5</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<!-- log end -->
+		<!-- 映入JSON -->
+		<!-- <dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.9.13</version>
+		</dependency> -->
+		<!-- CAS Client 3.2.1 -->
+		<!-- <dependency>
+			<groupId>org.jasig.cas.client</groupId>
+			<artifactId>cas-client-core</artifactId>
+			<version>3.2.1</version>
+		</dependency> -->
+		<!-- Apach POI组件包 -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>ooxml-schemas</artifactId>
+			<version>1.1</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.8</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.8</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+ 			<groupId>xerces</groupId>
+ 			<artifactId>xercesImpl</artifactId>
+ 			<version>2.11.0</version>
+ 		</dependency>
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>1.8.7</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<!-- Lucene_Core -->
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-core</artifactId>
+			<version>5.2.1</version>
+		</dependency>
+		<!-- Lucene_Common_Analyzers -->
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-analyzers-common</artifactId>
+			<version>5.2.1</version>
+		</dependency>
+		<!-- Lucene_QueryParsers -->
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-queryparser</artifactId>
+			<version>5.2.1</version>
+		</dependency>
+		<!-- Lucene_中文分词包 -->
+		<dependency>
+			<groupId>org.wltea.analyzer.lucene</groupId>
+			<artifactId>IKAnalyzerV5</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<!-- http://mvnrepository.com/artifact/com.alibaba/fastjson -->
+		<!-- FastJson -->
+		<!-- freemarker模板工具类 -->
+		<dependency>
+		    <groupId>org.freemarker</groupId>
+		    <artifactId>freemarker</artifactId>
+		    <version>2.3.19</version>
+		</dependency>
+		
+		<!-- 阿里巴巴的fastjson -->
+		<dependency>
+		    <groupId>com.alibaba</groupId>
+		    <artifactId>fastjson</artifactId>
+		    <version>1.2.7</version>
+		</dependency>
+		
+		<!-- Ecache -->
+<!-- 		<dependency> -->
+<!-- 		    <groupId>net.sf.ehcache</groupId> -->
+<!-- 		    <artifactId>ehcache-core</artifactId> -->
+<!-- 		    <version>2.6.11</version>2.10.1 -->
+<!-- 		</dependency> -->
+		<!-- Apache Shiro 权限架构 -->
+		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-all</artifactId>
+			<version>1.2.4</version>
+		</dependency>
+		<!-- Mybatis的Ecache支持包 -->
+		<dependency>
+		    <groupId>org.mybatis.caches</groupId>
+		    <artifactId>mybatis-ehcache</artifactId>
+		    <version>1.0.3</version>
+		</dependency>
+		
+		<dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-servlet-api</artifactId>
+            <version>${project.tomcat.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- 短信接口 -->
+        <!-- <dependency>
+            <groupId>com.taobao.sdk</groupId>
+            <artifactId>com.taobao.sdk</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alidayu.sdk</groupId>
+            <artifactId>com.alidayu.sdk</artifactId>
+            <version>1.0</version>
+        </dependency> -->
+        <dependency>
+            <groupId>showapi.sms.sdk</groupId>
+            <artifactId>sms</artifactId>
+            <version>1.0</version>
+        </dependency>
+	</dependencies>
+	<!-- <repositories>
+	    <repository>
+	      <id>people.apache.snapshots</id>
+	      <url>
+	        http://repository.apache.org/content/groups/snapshots-group/
+	      </url>
+	      <releases>
+	        <enabled>false</enabled>
+	      </releases>
+	      <snapshots>
+	        <enabled>true</enabled>
+	      </snapshots>
+	    </repository>
+	</repositories>
+	
+	 <pluginRepositories>
+	   <pluginRepository>
+	     <id>apache.snapshots</id>
+	     <name>Apache Snapshots</name>
+	     <url>http://repository.apache.org/content/groups/snapshots-group/</url>
+	     <releases>
+	       <enabled>false</enabled>
+	     </releases>
+	     <snapshots>
+	       <enabled>true</enabled>
+	     </snapshots>
+	   </pluginRepository>
+	 </pluginRepositories> -->
+	<build>
+		<finalName>dataCenter</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>  
+	            <artifactId>maven-compiler-plugin</artifactId>  
+	            <version>3.1</version>  
+	            <configuration>  
+	                <source>1.7</source>  
+	                <target>1.7</target>  
+	            </configuration>
+			</plugin>
+		
+			<!-- <plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>2.2</version>
+                <configuration>
+                	<port>80</port>
+                    <url>http:http://192.168.2.105:8080//manager/text</url>
+                    <username>pharbers</username>
+                    <password>Pharbers20151qaz0Okmqp</password>
+                    <path>/${finalName}</path>
+                    <contextReloadable>true</contextReloadable>
+                </configuration>
+			</plugin> -->
+			
+			<plugin>
+		        <groupId>org.codehaus.mojo</groupId>
+		        <artifactId>tomcat-maven-plugin</artifactId>
+		        <version>1.1</version>
+		        <configuration>
+		          <url>http://192.168.2.105:8080//manager/text</url>
+		          <server>tomcat8</server>
+		          <ignorePackaging>true</ignorePackaging>
+		        </configuration>
+		    </plugin>
+		     
+		</plugins>
+	</build>
+</project>

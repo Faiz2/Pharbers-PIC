@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="pha.com.code.queryKeyWord.dao.MedicalForDataInfoMapper" >
+  <resultMap id="BaseResultMap" type="pha.com.code.queryKeyWord.model.MedicalForDataInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="databasename" property="databasename" jdbcType="NVARCHAR" />
+    <result column="manutypename" property="manutypename" jdbcType="NVARCHAR" />
+    <result column="interatc1name" property="interatc1name" jdbcType="NVARCHAR" />
+    <result column="interatc2name" property="interatc2name" jdbcType="NVARCHAR" />
+    <result column="interatc3name" property="interatc3name" jdbcType="NVARCHAR" />
+    <result column="manunamech" property="manunameCh" jdbcType="NVARCHAR" />
+    <result column="provincename" property="provincename" jdbcType="NVARCHAR" />
+    <result column="productnamech" property="productnameCh" jdbcType="NVARCHAR" />
+    <result column="dosageformname" property="dosageformname" jdbcType="NVARCHAR" />
+    <result column="specificationsname" property="specificationsname" jdbcType="NVARCHAR" />
+    <result column="packagingname" property="packagingname" jdbcType="NVARCHAR" />
+    <result column="genericnamenamech" property="genericnamenameCh" jdbcType="NVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, databasename, manutypename, descinfo, manuname_ch, provincename, productname_ch, 
+    dosageformname, specificationsname, packagingname, genericnamename_ch
+  </sql>
+  <select id="selectByIdnexData" resultMap="BaseResultMap">
+   SELECT DISTINCT  b.databasename as databasename,
+           c.manutypename as manutypename,
+           l.descinfo as interatc1name,
+           m.descinfo as interatc2name,
+           n.descinfo as interatc3name,
+           d.manuname_ch as manunamech,
+           e.provincename as provincename,
+           f.productname_ch as productnamech,
+           g.dosageformname as dosageformname,
+           h.specificationsname as specificationsname,
+           i.packagingname as packagingname,
+           k.genericnamename_ch as  genericnamenamech
+        FROM medicalsalesdata a 
+                         join databaseinfo b on a.databaseid = b.databaseid 
+                         join manufacturertypeinfo c on a.manutypeid = c.manutypeid
+                         join manufacturerinfo d on a.manuid = d.manuid
+                         join province e on a.proviceid = e.provinceid
+                         join productnameinfo f on a.productnameid = f.productnameid
+                         join dosageforminfo g on a.dosageformid = g.dosageformid
+                         join specificationsinfo h on a.specificationsid = h.specificationsid
+                         join packaginginfo i on a.packagingid = i.packagingid
+                         join minimumunit j on a.minimumunitid = j.minimum_unit_id
+                         join genericnameinfo k on a.genericnameid = k.genericnameid
+						 join internationalatc1info l on a.interatc1id = l.interatc1id
+                         join internationalatc2info m on a.interatc2id = m.interatc2id
+                         join internationalatc3info n on a.interatc3id = n.interatc3id
+  </select>
+  <select id="selectByID" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from medicalfordatainfo
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByID" parameterType="java.lang.Integer" >
+    delete from medicalfordatainfo
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="pha.com.code.queryKeyWord.model.MedicalForDataInfo" >
+    insert into medicalfordatainfo (databasename, manutypename, 
+      descinfo, manuname_ch, provincename, 
+      productname_ch, dosageformname, specificationsname, 
+      packagingname, genericnamename_ch)
+    values (#{databasename,jdbcType=NVARCHAR}, #{manutypename,jdbcType=NVARCHAR}, 
+      #{descinfo,jdbcType=NVARCHAR}, #{manunameCh,jdbcType=NVARCHAR}, #{provincename,jdbcType=NVARCHAR}, 
+      #{productnameCh,jdbcType=NVARCHAR}, #{dosageformname,jdbcType=NVARCHAR}, #{specificationsname,jdbcType=NVARCHAR}, 
+      #{packagingname,jdbcType=NVARCHAR}, #{genericnamenameCh,jdbcType=NVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="pha.com.code.queryKeyWord.model.MedicalForDataInfo" >
+    insert into medicalfordatainfo
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="databasename != null" >
+        databasename,
+      </if>
+      <if test="manutypename != null" >
+        manutypename,
+      </if>
+      <if test="descinfo != null" >
+        descinfo,
+      </if>
+      <if test="manunameCh != null" >
+        manuname_ch,
+      </if>
+      <if test="provincename != null" >
+        provincename,
+      </if>
+      <if test="productnameCh != null" >
+        productname_ch,
+      </if>
+      <if test="dosageformname != null" >
+        dosageformname,
+      </if>
+      <if test="specificationsname != null" >
+        specificationsname,
+      </if>
+      <if test="packagingname != null" >
+        packagingname,
+      </if>
+      <if test="genericnamenameCh != null" >
+        genericnamename_ch,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="databasename != null" >
+        #{databasename,jdbcType=NVARCHAR},
+      </if>
+      <if test="manutypename != null" >
+        #{manutypename,jdbcType=NVARCHAR},
+      </if>
+      <if test="descinfo != null" >
+        #{descinfo,jdbcType=NVARCHAR},
+      </if>
+      <if test="manunameCh != null" >
+        #{manunameCh,jdbcType=NVARCHAR},
+      </if>
+      <if test="provincename != null" >
+        #{provincename,jdbcType=NVARCHAR},
+      </if>
+      <if test="productnameCh != null" >
+        #{productnameCh,jdbcType=NVARCHAR},
+      </if>
+      <if test="dosageformname != null" >
+        #{dosageformname,jdbcType=NVARCHAR},
+      </if>
+      <if test="specificationsname != null" >
+        #{specificationsname,jdbcType=NVARCHAR},
+      </if>
+      <if test="packagingname != null" >
+        #{packagingname,jdbcType=NVARCHAR},
+      </if>
+      <if test="genericnamenameCh != null" >
+        #{genericnamenameCh,jdbcType=NVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByIDSelective" parameterType="pha.com.code.queryKeyWord.model.MedicalForDataInfo" >
+    update medicalfordatainfo
+    <set >
+      <if test="databasename != null" >
+        databasename = #{databasename,jdbcType=NVARCHAR},
+      </if>
+      <if test="manutypename != null" >
+        manutypename = #{manutypename,jdbcType=NVARCHAR},
+      </if>
+      <if test="descinfo != null" >
+        descinfo = #{descinfo,jdbcType=NVARCHAR},
+      </if>
+      <if test="manunameCh != null" >
+        manuname_ch = #{manunameCh,jdbcType=NVARCHAR},
+      </if>
+      <if test="provincename != null" >
+        provincename = #{provincename,jdbcType=NVARCHAR},
+      </if>
+      <if test="productnameCh != null" >
+        productname_ch = #{productnameCh,jdbcType=NVARCHAR},
+      </if>
+      <if test="dosageformname != null" >
+        dosageformname = #{dosageformname,jdbcType=NVARCHAR},
+      </if>
+      <if test="specificationsname != null" >
+        specificationsname = #{specificationsname,jdbcType=NVARCHAR},
+      </if>
+      <if test="packagingname != null" >
+        packagingname = #{packagingname,jdbcType=NVARCHAR},
+      </if>
+      <if test="genericnamenameCh != null" >
+        genericnamename_ch = #{genericnamenameCh,jdbcType=NVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByID" parameterType="pha.com.code.queryKeyWord.model.MedicalForDataInfo" >
+    update medicalfordatainfo
+    set databasename = #{databasename,jdbcType=NVARCHAR},
+      manutypename = #{manutypename,jdbcType=NVARCHAR},
+      descinfo = #{descinfo,jdbcType=NVARCHAR},
+      manuname_ch = #{manunameCh,jdbcType=NVARCHAR},
+      provincename = #{provincename,jdbcType=NVARCHAR},
+      productname_ch = #{productnameCh,jdbcType=NVARCHAR},
+      dosageformname = #{dosageformname,jdbcType=NVARCHAR},
+      specificationsname = #{specificationsname,jdbcType=NVARCHAR},
+      packagingname = #{packagingname,jdbcType=NVARCHAR},
+      genericnamename_ch = #{genericnamenameCh,jdbcType=NVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

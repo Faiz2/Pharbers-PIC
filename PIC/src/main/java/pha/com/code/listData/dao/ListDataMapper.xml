@@ -1,0 +1,533 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="pha.com.code.listData.dao.ListDataMapper" >
+  <resultMap id="BaseResultMap" type="pha.com.code.listData.model.ListData" >
+    <id column="salesid" property="salesid" jdbcType="INTEGER" />
+    <result column="salesdate" property="salesDate" jdbcType="NVARCHAR" />
+    <result column="provincename" property="provinceName" jdbcType="NVARCHAR" />
+    <result column="genericnamename" property="genericnameName" jdbcType="NVARCHAR" />
+    <result column="productname" property="productName" jdbcType="NVARCHAR" />
+    <result column="manuname" property="manuName" jdbcType="NVARCHAR" />
+    <result column="specificationsname" property="specificationsName" jdbcType="NVARCHAR" />
+    <result column="salesvalue" property="salesValue" jdbcType="DECIMAL" />
+    <result column="unit" property="unit" jdbcType="DECIMAL" />
+    <result column="atc1name" property="Atc1Name" jdbcType="NVARCHAR" />
+    <result column="atc2name" property="Atc2Name" jdbcType="NVARCHAR" />
+    <result column="atc3name" property="Atc3Name" jdbcType="NVARCHAR" />
+    <result column="minimumname" property="minimumName" jdbcType="NVARCHAR" />
+    <result column="manutypename" property="manuTypeName" jdbcType="NVARCHAR" />
+    <result column="dosageformname" property="dosageformName" jdbcType="NVARCHAR" />
+    <result column="packagingname" property="packagingName" jdbcType="NVARCHAR" />
+  </resultMap>
+  
+  <resultMap id="NoProvinceNameBaseResultMap" type="pha.com.code.listData.model.ListDataNoProvince" >
+    <id column="salesid" property="salesid" jdbcType="INTEGER" />
+    <result column="salesdate" property="salesDate" jdbcType="NVARCHAR" />
+    <result column="genericnamename" property="genericnameName" jdbcType="NVARCHAR" />
+    <result column="productname" property="productName" jdbcType="NVARCHAR" />
+    <result column="manuname" property="manuName" jdbcType="NVARCHAR" />
+    <result column="specificationsname" property="specificationsName" jdbcType="NVARCHAR" />
+    <result column="salesvalue" property="salesValue" jdbcType="DECIMAL" />
+    <result column="unit" property="unit" jdbcType="DECIMAL" />
+    <result column="atc1name" property="Atc1Name" jdbcType="NVARCHAR" />
+    <result column="atc2name" property="Atc2Name" jdbcType="NVARCHAR" />
+    <result column="atc3name" property="Atc3Name" jdbcType="NVARCHAR" />
+    <result column="minimumname" property="minimumName" jdbcType="NVARCHAR" />
+    <result column="manutypename" property="manuTypeName" jdbcType="NVARCHAR" />
+    <result column="dosageformname" property="dosageformName" jdbcType="NVARCHAR" />
+    <result column="packagingname" property="packagingName" jdbcType="NVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    packagingname,
+    <choose>
+    	<when test="salesDate != null and salesDate == '年份汇总'">(a.sales_year)</when>
+    	<when test="salesDate != null and salesDate == '月份汇总'">(a.sales_year+'/'+a.sales_month) </when>
+    	<otherwise>
+    		(a.sales_year+'/'+a.sales_month)
+    	</otherwise>
+    </choose>
+    salesdate,
+    <choose>
+		<when test="provinceid != null and provinceid != '' and provinceid != 32">
+			e.provincename,
+		</when>
+		<when test="provinceid == null or provinceid == ''">
+			e.provincename,
+		</when>
+	</choose>
+    k.genericnamename_ch genericnamename,
+    f.productname_ch productname,
+    d.manuname_ch manuname,
+	h.specificationsname specificationsname,
+	<!-- <choose>
+		<when test="provinceid != null and provinceid != '' and (provinceid == 101 or provinceid == 100)">
+			SUM (a.sales_value)
+		</when>
+		<otherwise>
+			a.sales_value
+		</otherwise>
+	</choose> -->
+	SUM (a.sales_value) salesvalue, 
+	SUM (a.unit) unit,
+	l.descinfo atc1name,m.descinfo atc2name,n.descinfo atc3name,
+	j.minimum_unit_ch minimumname,c.manutypename,g.dosageformname
+  </sql>
+<!--   <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/> -->
+  <select id="selectByParameters" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select 
+    	<include refid="Base_Column_List" />
+    from medicalsalesdata a
+		 left join manufacturertypeinfo c on a.manutypeid = c.manutypeid
+		 left join manufacturerinfo d on a.manuid = d.manuid
+		 left join province e on a.proviceid = e.provinceid
+		 left join productnameinfo f on a.productnameid = f.productnameid
+		 left join dosageforminfo g on a.dosageformid = g.dosageformid
+		 left join specificationsinfo h on a.specificationsid = h.specificationsid
+		 left join packaginginfo i on a.packagingid = i.packagingid
+		 left join minimumunit j on a.minimumunitid = j.minimum_unit_id
+		 left join genericnameinfo k on a.genericnameid = k.genericnameid
+		 left join internationalatc1info l on a.interatc1id = l.interatc1id
+		 left join internationalatc2info m on a.interatc2id = m.interatc2id
+		 left join internationalatc3info n on a.interatc3id = n.interatc3id
+	<where>
+		<trim suffixOverrides="AND | OR" prefix="1=1">
+			<if test="time != null and time != ''">
+				<choose>
+					<when test="timeType != null and timeType == 'year'">AND a.sales_year </when>
+					<!-- <when test=""> = #{provinceName,jdbcType=NVARCHAR}</when>
+					<when test=""></when>
+					<when test=""></when>
+					<when test=""></when>
+					<when test=""></when>
+					<when test=""></when> -->
+				</choose>
+				<choose>
+					<when test="operator != null and operator == 'eq'"> = #{time,jdbcType=NVARCHAR}</when>
+					<when test=""></when>
+					<when test=""></when>
+					<when test=""></when>
+					<when test=""></when>
+					<when test=""></when>
+				</choose>
+			</if>
+			<if test="provinceid != null and provinceid != '' and provinceid != 32 and provinceid != 33">
+				AND e.provinceid
+					<choose>
+						<when test="operator != null and operator == 'eq'"> = #{provinceid,jdbcType=NVARCHAR}</when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+					</choose>
+			</if>
+			<if test="genericnameid != null and genericnameid != ''">
+				AND k.genericnameid 
+					<choose>
+						<when test="operator != null and operator == 'eq'"> = #{genericnameid,jdbcType=NVARCHAR}</when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+					</choose>
+			</if>
+			<if test="productnameid != null and productnameid != ''">
+				AND f.productnameid
+					<choose>
+						<when test="operator != null and operator == 'eq'"> = #{productnameid,jdbcType=NVARCHAR}</when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+					</choose>
+			</if>
+			<if test="manuid != null and manuid != ''">
+				AND d.manuid 
+					<choose>
+						<when test="operator != null and operator == 'eq'"> = #{manuid,jdbcType=NVARCHAR}</when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+					</choose>
+			</if>
+			<if test="specificationsid != null and specificationsid != ''">
+				AND h.specificationsid 
+					<choose>
+						<when test="operator != null and operator == 'eq'"> = #{specificationsid,jdbcType=NVARCHAR}</when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+					</choose>
+			</if>
+			<!-- <if test="salesValue != null and salesValue != ''">
+				AND a.sales_value 
+					<choose>
+						<when test="operator != null and operator == 'eq'"> = #{salesValue,jdbcType=DECIMAL}</when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+					</choose>
+			</if>
+			<if test="unit != null and unit != ''">
+				AND a.unit 
+					<choose>
+						<when test="operator != null and operator == 'eq'"> = #{unit,jdbcType=DECIMAL}</when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+					</choose>
+			</if> -->
+			<if test="interatc1id != null and interatc1id != ''">
+				AND l.interatc1id
+					<choose>
+						<when test="operator != null and operator == 'eq'"> = #{interatc1id,jdbcType=NVARCHAR}</when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+					</choose>
+			</if>
+			<if test="interatc2id != null and interatc2id != ''">
+				AND m.interatc2id 
+					<choose>
+						<when test="operator != null and operator == 'eq'"> = #{interatc2id,jdbcType=NVARCHAR}</when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+					</choose>
+			</if>
+			<if test="interatc3id != null and interatc3id != ''">
+				AND n.interatc3id 
+					<choose>
+						<when test="operator != null and operator == 'eq'"> = #{interatc3id,jdbcType=NVARCHAR}</when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+					</choose>
+			</if>
+			<if test="minimum_unit_id != null and minimum_unit_id != ''">
+				AND j.minimum_unit_id 
+					<choose>
+						<when test="operator != null and operator == 'eq'"> = #{minimum_unit_id,jdbcType=NVARCHAR}</when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+					</choose>
+			</if>
+			<if test="manutypeid != null and manutypeid != ''">
+				AND c.manutypeid 
+					<choose>
+						<when test="operator != null and operator == 'eq'"> = #{manutypeid,jdbcType=NVARCHAR}</when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+					</choose>
+			</if>
+			<if test="dosageformid != null and dosageformid != ''">
+				AND g.dosageformid 
+					<choose>
+						<when test="operator != null and operator == 'eq'"> = #{dosageformid,jdbcType=NVARCHAR}</when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+					</choose>
+			</if>
+			<if test="packagingid != null and packagingid != ''">
+				AND i.packagingid 
+					<choose>
+						<when test="operator != null and operator == 'eq'"> = #{packagingid,jdbcType=NVARCHAR}</when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+					</choose>
+			</if>
+			AND a.sales_value &lt;&gt; 0 AND a.unit &lt;&gt; 0
+		</trim>
+	</where>
+	<trim prefix="GROUP BY">
+		i.packagingname,
+		<choose>
+			<when test="provinceid != null and provinceid != '' and provinceid != 32">
+				e.provincename,
+			</when>
+			<when test="provinceid == null or provinceid == ''">
+				e.provincename,
+			</when>
+		</choose>
+		k.genericnamename_ch,
+		f.productname_ch,
+		d.manuname_ch,
+		h.specificationsname,
+		l.descinfo,
+		m.descinfo,
+		n.descinfo,
+		j.minimum_unit_ch,
+		c.manutypename,
+		g.dosageformname,
+		<choose>
+	    	<when test="salesDate != null and salesDate == '年份汇总'">(a.sales_year)</when>
+	    	<when test="salesDate != null and salesDate == '月份汇总'">(a.sales_year+'/'+a.sales_month) </when>
+	    	<otherwise>
+	    		(a.sales_year+'/'+a.sales_month)
+	    	</otherwise>
+	    </choose>
+		<!-- (a.sales_year + '/' + a.sales_month) -->
+	</trim>
+  </select>
+  
+  <!-- 全国汇总单独导出语句 -->
+  <select id="selectByNoProvince" resultMap="NoProvinceNameBaseResultMap" parameterType="java.util.Map" >
+    select 
+    	<include refid="Base_Column_List" />
+    from medicalsalesdata a
+		 left join manufacturertypeinfo c on a.manutypeid = c.manutypeid
+		 left join manufacturerinfo d on a.manuid = d.manuid
+		 left join province e on a.proviceid = e.provinceid
+		 left join productnameinfo f on a.productnameid = f.productnameid
+		 left join dosageforminfo g on a.dosageformid = g.dosageformid
+		 left join specificationsinfo h on a.specificationsid = h.specificationsid
+		 left join packaginginfo i on a.packagingid = i.packagingid
+		 left join minimumunit j on a.minimumunitid = j.minimum_unit_id
+		 left join genericnameinfo k on a.genericnameid = k.genericnameid
+		 left join internationalatc1info l on a.interatc1id = l.interatc1id
+		 left join internationalatc2info m on a.interatc2id = m.interatc2id
+		 left join internationalatc3info n on a.interatc3id = n.interatc3id
+	<where>
+		<trim suffixOverrides="AND | OR" prefix="1=1">
+			<if test="time != null and time != ''">
+				<choose>
+					<when test="timeType != null and timeType == 'year'">AND a.sales_year </when>
+					<!-- <when test=""> = #{provinceName,jdbcType=NVARCHAR}</when>
+					<when test=""></when>
+					<when test=""></when>
+					<when test=""></when>
+					<when test=""></when>
+					<when test=""></when> -->
+				</choose>
+				<choose>
+					<when test="operator != null and operator == 'eq'"> = #{time,jdbcType=NVARCHAR}</when>
+					<when test=""></when>
+					<when test=""></when>
+					<when test=""></when>
+					<when test=""></when>
+					<when test=""></when>
+				</choose>
+			</if>
+			<if test="provinceid != null and provinceid != '' and provinceid != 32 and provinceid != 33">
+				AND e.provinceid
+					<choose>
+						<when test="operator != null and operator == 'eq'"> = #{provinceid,jdbcType=NVARCHAR}</when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+					</choose>
+			</if>
+			<if test="genericnameid != null and genericnameid != ''">
+				AND k.genericnameid 
+					<choose>
+						<when test="operator != null and operator == 'eq'"> = #{genericnameid,jdbcType=NVARCHAR}</when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+					</choose>
+			</if>
+			<if test="productnameid != null and productnameid != ''">
+				AND f.productnameid
+					<choose>
+						<when test="operator != null and operator == 'eq'"> = #{productnameid,jdbcType=NVARCHAR}</when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+					</choose>
+			</if>
+			<if test="manuid != null and manuid != ''">
+				AND d.manuid 
+					<choose>
+						<when test="operator != null and operator == 'eq'"> = #{manuid,jdbcType=NVARCHAR}</when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+					</choose>
+			</if>
+			<if test="specificationsid != null and specificationsid != ''">
+				AND h.specificationsid 
+					<choose>
+						<when test="operator != null and operator == 'eq'"> = #{specificationsid,jdbcType=NVARCHAR}</when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+					</choose>
+			</if>
+			<!-- <if test="salesValue != null and salesValue != ''">
+				AND a.sales_value 
+					<choose>
+						<when test="operator != null and operator == 'eq'"> = #{salesValue,jdbcType=DECIMAL}</when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+					</choose>
+			</if>
+			<if test="unit != null and unit != ''">
+				AND a.unit 
+					<choose>
+						<when test="operator != null and operator == 'eq'"> = #{unit,jdbcType=DECIMAL}</when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+					</choose>
+			</if> -->
+			<if test="interatc1id != null and interatc1id != ''">
+				AND l.interatc1id
+					<choose>
+						<when test="operator != null and operator == 'eq'"> = #{interatc1id,jdbcType=NVARCHAR}</when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+					</choose>
+			</if>
+			<if test="interatc2id != null and interatc2id != ''">
+				AND m.interatc2id 
+					<choose>
+						<when test="operator != null and operator == 'eq'"> = #{interatc2id,jdbcType=NVARCHAR}</when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+					</choose>
+			</if>
+			<if test="interatc3id != null and interatc3id != ''">
+				AND n.interatc3id 
+					<choose>
+						<when test="operator != null and operator == 'eq'"> = #{interatc3id,jdbcType=NVARCHAR}</when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+					</choose>
+			</if>
+			<if test="minimum_unit_id != null and minimum_unit_id != ''">
+				AND j.minimum_unit_id 
+					<choose>
+						<when test="operator != null and operator == 'eq'"> = #{minimum_unit_id,jdbcType=NVARCHAR}</when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+					</choose>
+			</if>
+			<if test="manutypeid != null and manutypeid != ''">
+				AND c.manutypeid 
+					<choose>
+						<when test="operator != null and operator == 'eq'"> = #{manutypeid,jdbcType=NVARCHAR}</when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+					</choose>
+			</if>
+			<if test="dosageformid != null and dosageformid != ''">
+				AND g.dosageformid 
+					<choose>
+						<when test="operator != null and operator == 'eq'"> = #{dosageformid,jdbcType=NVARCHAR}</when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+					</choose>
+			</if>
+			<if test="packagingid != null and packagingid != ''">
+				AND i.packagingid 
+					<choose>
+						<when test="operator != null and operator == 'eq'"> = #{packagingid,jdbcType=NVARCHAR}</when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+						<when test=""></when>
+					</choose>
+			</if>
+			AND a.sales_value &lt;&gt; 0 AND a.unit &lt;&gt; 0
+		</trim>
+	</where>
+	<trim prefix="GROUP BY">
+		i.packagingname,
+		<choose>
+			<when test="provinceid != null and provinceid != '' and provinceid != 32">
+				e.provincename,
+			</when>
+			<when test="provinceid == null or provinceid == ''">
+				e.provincename,
+			</when>
+		</choose>
+		k.genericnamename_ch,
+		f.productname_ch,
+		d.manuname_ch,
+		h.specificationsname,
+		l.descinfo,
+		m.descinfo,
+		n.descinfo,
+		j.minimum_unit_ch,
+		c.manutypename,
+		g.dosageformname,
+		<choose>
+	    	<when test="salesDate != null and salesDate == '年份汇总'">(a.sales_year)</when>
+	    	<when test="salesDate != null and salesDate == '月份汇总'">(a.sales_year+'/'+a.sales_month) </when>
+	    	<otherwise>
+	    		(a.sales_year+'/'+a.sales_month)
+	    	</otherwise>
+	    </choose>
+		<!-- (a.sales_year + '/' + a.sales_month) -->
+	</trim>
+  </select>
+  
+  <select id="selectByID" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    	<include refid="Base_Column_List" />
+    from medicalsalesdata
+    where salesid = #{salesid,jdbcType=INTEGER}
+  </select>
+</mapper>

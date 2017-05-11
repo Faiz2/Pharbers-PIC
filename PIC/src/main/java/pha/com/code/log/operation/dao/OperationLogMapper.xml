@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="pha.com.code.log.operation.dao.OperationLogMapper" >
+  <resultMap id="BaseResultMap" type="pha.com.code.log.operation.model.OperationLog" >
+    <id column="operid" property="operid" jdbcType="INTEGER" />
+    <result column="username" property="username" jdbcType="NVARCHAR" />
+    <result column="operationtype" property="operationtype" jdbcType="NVARCHAR" />
+    <result column="time_start" property="timeStart" jdbcType="TIMESTAMP" />
+    <result column="time_end" property="timeEnd" jdbcType="TIMESTAMP" />
+    <result column="id" property="id" jdbcType="NVARCHAR" />
+    <result column="descinfo" property="descinfo" jdbcType="NVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    operid, username, operationtype, time_start, time_end, id, descinfo
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from operationlog
+    where operid = #{operid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from operationlog
+    where operid = #{operid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="pha.com.code.log.operation.model.OperationLog" >
+    insert into operationlog (operid, username, operationtype, 
+      time_start, time_end, id, 
+      descinfo)
+    values (#{operid,jdbcType=INTEGER}, #{username,jdbcType=NVARCHAR}, #{operationtype,jdbcType=NVARCHAR}, 
+      #{timeStart,jdbcType=TIMESTAMP}, #{timeEnd,jdbcType=TIMESTAMP}, #{id,jdbcType=NVARCHAR}, 
+      #{descinfo,jdbcType=NVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="pha.com.code.log.operation.model.OperationLog" >
+    insert into operationlog
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="operid != null" >
+        operid,
+      </if>
+      <if test="username != null" >
+        username,
+      </if>
+      <if test="operationtype != null" >
+        operationtype,
+      </if>
+      <if test="timeStart != null" >
+        time_start,
+      </if>
+      <if test="timeEnd != null" >
+        time_end,
+      </if>
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="descinfo != null" >
+        descinfo,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="operid != null" >
+        #{operid,jdbcType=INTEGER},
+      </if>
+      <if test="username != null" >
+        #{username,jdbcType=NVARCHAR},
+      </if>
+      <if test="operationtype != null" >
+        #{operationtype,jdbcType=NVARCHAR},
+      </if>
+      <if test="timeStart != null" >
+        #{timeStart,jdbcType=TIMESTAMP},
+      </if>
+      <if test="timeEnd != null" >
+        #{timeEnd,jdbcType=TIMESTAMP},
+      </if>
+      <if test="id != null" >
+        #{id,jdbcType=NVARCHAR},
+      </if>
+      <if test="descinfo != null" >
+        #{descinfo,jdbcType=NVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="pha.com.code.log.operation.model.OperationLog" >
+    update operationlog
+    <set >
+      <if test="username != null" >
+        username = #{username,jdbcType=NVARCHAR},
+      </if>
+      <if test="operationtype != null" >
+        operationtype = #{operationtype,jdbcType=NVARCHAR},
+      </if>
+      <if test="timeStart != null" >
+        time_start = #{timeStart,jdbcType=TIMESTAMP},
+      </if>
+      <if test="timeEnd != null" >
+        time_end = #{timeEnd,jdbcType=TIMESTAMP},
+      </if>
+      <if test="id != null" >
+        id = #{id,jdbcType=NVARCHAR},
+      </if>
+      <if test="descinfo != null" >
+        descinfo = #{descinfo,jdbcType=NVARCHAR},
+      </if>
+    </set>
+    where operid = #{operid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="pha.com.code.log.operation.model.OperationLog" >
+    update operationlog
+    set username = #{username,jdbcType=NVARCHAR},
+      operationtype = #{operationtype,jdbcType=NVARCHAR},
+      time_start = #{timeStart,jdbcType=TIMESTAMP},
+      time_end = #{timeEnd,jdbcType=TIMESTAMP},
+      id = #{id,jdbcType=NVARCHAR},
+      descinfo = #{descinfo,jdbcType=NVARCHAR}
+    where operid = #{operid,jdbcType=INTEGER}
+  </update>
+</mapper>

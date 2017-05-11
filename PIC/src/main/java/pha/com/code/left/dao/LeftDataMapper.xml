@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="pha.com.code.left.dao.LeftDataMapper">
+	<resultMap id="BaseResultMap" type="pha.com.code.left.model.LeftData">
+		<result column="lid" property="lid" jdbcType="INTEGER" />
+		<result column="lname" property="lname" jdbcType="NVARCHAR" />
+		<result column="descinfo" property="remarks" jdbcType="NVARCHAR" />
+		<result column="parentcode" property="parentCode" jdbcType="NVARCHAR" />
+	</resultMap>
+	<sql id="Base_Query_List">
+		
+	</sql>
+	
+	<cache type="org.mybatis.caches.ehcache.LoggingEhcache"/> 
+	<!-- ATC1 -->
+	<select id="queryByATC1" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select interatc1id lid,interatc1name lname,descinfo from
+		dbo.internationalatc1info
+		WHERE interatc1name &lt;&gt; 'A' AND interatc1name &lt;&gt;  'B'
+	</select>
+	<!-- ATC2 -->
+	<select id="queryByATC2" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select interatc2id lid,interatc2name lname,descinfo,parentcode from
+		dbo.internationalatc2info
+		<where>
+			<trim suffixOverrides="AND | OR" prefix="1=1">
+				<if test="code != null and code != ''">
+					AND parentcode = #{code,jdbcType=NVARCHAR}
+				</if>
+				AND parentcode &lt;&gt; 'A' AND parentcode &lt;&gt;  'B'
+			</trim>
+		</where>
+	</select>
+	<!-- ATC3 -->
+	<select id="queryByATC3" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select interatc3id lid,interatc3name lname,descinfo,parentcode from
+		dbo.internationalatc3info
+		<where>
+			<trim suffixOverrides="AND | OR" prefix="1=1">
+				<if test="code != null and code != ''">
+					AND parentcode = #{code,jdbcType=NVARCHAR}
+				</if>
+				AND parentcode &lt;&gt; 'A-10' AND parentcode &lt;&gt;  'B-10'
+			</trim>
+		</where>
+	</select>
+	<!-- 通用名 -->
+	<select id="queryByGenericName" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select genericnameid lid,genericnamename_ch lname,parentcode from
+		dbo.genericnameinfo
+		<where>
+			<trim suffixOverrides="AND | OR" prefix="1=1">
+				<if test="code != null and code != ''">
+					AND parentcode = #{code,jdbcType=NVARCHAR}
+				</if>
+				AND parentcode &lt;&gt; 'A-10-1' AND parentcode &lt;&gt;  'B-10-1' AND parentcode &lt;&gt;  'B-10-2'
+			</trim>
+		</where>
+	</select>
+	<!-- 产品  -->
+	<select id="queryByProduct" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select productnameid lid,productname_ch lname from productnameinfo
+	</select>
+	<!-- 省份  -->
+	<select id="queryByProvince" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select provinceid lid,provincename lname from province order by Convert(int,descinfo) desc
+	</select>
+	<!-- 生产厂家 类型 -->
+	<select id="queryByManufactureType" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select manutypeid lid,manutypename lname from manufacturertypeinfo
+	</select>
+	<!-- 生产厂家  -->
+	<select id="queryByManufacture" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select manuid lid , manuname_ch lname from manufacturerinfo
+	</select>
+	<!-- 剂型  -->
+	<select id="queryByDosage" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select dosageformid lid,dosageformname lname from dosageforminfo
+	</select>
+	<!-- 规格 -->
+	<select id="queryBySpecification" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select specificationsid lid,specificationsname lname from specificationsinfo
+	</select>
+	<!-- 包装  -->
+	<select id="queryByPackage" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select packagingid lid,packagingname lname from packaginginfo
+	</select>
+	
+	<!-- 联动查询所有 -->
+	<select id="queryByIDALL" resultMap="BaseResultMap" parameterType="java.util.Map">
+		SELECT DISTINCT 
+			<if test="leftType != null and leftType != '' and leftType == 1 and leftValue != null and leftValue != ''">
+				m.interatc2id lid,m.interatc2name lname,m.descinfo,m.parentcode
+			</if>
+			<if test="leftType != null and leftType != '' and leftType == 2 and leftValue != null and leftValue != ''">
+				n.interatc3id lid,n.interatc3name lname,n.descinfo,n.parentcode
+			</if>
+			<if test="leftType != null and leftType != '' and leftType == 3 and leftValue != null and leftValue != ''">
+				k.genericnameid lid,k.genericnamename_ch lname,k.parentcode
+			</if>
+			<if test="leftType != null and leftType != '' and leftType == 4 and leftValue != null and leftValue != ''">
+				f.productnameid lid,f.productname_ch lname
+			</if>
+			<if test="leftType != null and leftType != '' and leftType == 5 and leftValue != null and leftValue != ''">
+				c.manutypeid lid,c.manutypename lname
+			</if>
+			<if test="leftType != null and leftType != '' and leftType == 6 and leftValue != null and leftValue != ''">
+				d.manuid lid,d.manuname_ch lname
+			</if>
+			<if test="leftType != null and leftType != '' and leftType == 7 and leftValue != null and leftValue != ''">
+				g.dosageformid lid,g.dosageformname lname
+			</if>
+			<if test="leftType != null and leftType != '' and leftType == 8 and leftValue != null and leftValue != ''">
+				h.specificationsid lid,h.specificationsname lname
+			</if>
+			<if test="leftType != null and leftType != '' and leftType == 9 and leftValue != null and leftValue != ''">
+				i.packagingid lid,i.packagingname lname
+			</if>
+			FROM medicalsalesdata a
+			LEFT JOIN manufacturertypeinfo c ON a.manutypeid = c.manutypeid
+			LEFT JOIN manufacturerinfo d ON a.manuid = d.manuid
+			LEFT JOIN province e ON a.proviceid = e.provinceid
+			LEFT JOIN productnameinfo f ON a.productnameid = f.productnameid
+			LEFT JOIN dosageforminfo g ON a.dosageformid = g.dosageformid
+			LEFT JOIN specificationsinfo h ON a.specificationsid = h.specificationsid
+			LEFT JOIN packaginginfo i ON a.packagingid = i.packagingid
+			LEFT JOIN minimumunit j ON a.minimumunitid = j.minimum_unit_id
+			LEFT JOIN genericnameinfo k ON a.genericnameid = k.genericnameid
+			LEFT JOIN internationalatc1info l ON a.interatc1id = l.interatc1id
+			LEFT JOIN internationalatc2info m ON a.interatc2id = m.interatc2id
+			LEFT JOIN internationalatc3info n on a.interatc3id = n.interatc3id
+		<where>
+			<trim prefix="1=1">
+				<if test="temp != null and temp != '' and temp == 1">
+					AND a.interatc1id = #{leftValue,jdbcType=INTEGER}
+				</if>
+				<if test="temp != null and temp != '' and temp == 2">
+					AND a.interatc2id = #{leftValue,jdbcType=INTEGER}
+				</if>
+				<if test="temp != null and temp != '' and temp == 3">
+					AND a.interatc3id = #{leftValue,jdbcType=INTEGER}
+				</if>
+				<if test="temp != null and temp != '' and temp == 4">
+					AND k.genericnameid = #{leftValue,jdbcType=INTEGER}
+				</if>
+				<if test="temp != null and temp != '' and temp == 5">
+					AND f.productnameid = #{leftValue,jdbcType=INTEGER}
+				</if>
+				<if test="temp != null and temp != '' and temp == 6">
+					AND c.manutypeid = #{leftValue,jdbcType=INTEGER}
+				</if>
+				<if test="temp != null and temp != '' and temp == 7">
+					AND d.manuid = #{leftValue,jdbcType=INTEGER}
+				</if>
+				<if test="temp != null and temp != '' and temp == 8">
+					AND g.dosageformid = #{leftValue,jdbcType=INTEGER}
+				</if>
+				<if test="temp != null and temp != '' and temp == 9">
+					AND h.specificationsid = #{leftValue,jdbcType=INTEGER}
+				</if>
+			</trim>
+		</where>
+	</select>
+	
+	<!-- 商品向上寻找一个上级 -->
+	<select id="queryUpperloader" resultMap="BaseResultMap" parameterType="java.util.Map">
+		SELECT DISTINCT k.genericnameid lid,k.genericnamename_ch lname,k.parentcode from medicalsalesdata a
+			LEFT JOIN productnameinfo f ON a.productnameid = f.productnameid
+			LEFT JOIN genericnameinfo k ON a.genericnameid = k.genericnameid
+		<where>
+			<trim suffixOverrides="AND |OR" prefix="1=1">
+				<if test="productid != null and productid != ''">
+					AND f.productnameid = #{productid,jdbcType=INTEGER}
+				</if>
+			</trim>
+		</where>
+	</select>
+</mapper>

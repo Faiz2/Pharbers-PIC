@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="pha.com.code.log.login.dao.LoginLogMapper" >
+  <resultMap id="BaseResultMap" type="pha.com.code.log.login.model.LoginLog" >
+    <id column="logid" property="logid" jdbcType="INTEGER" />
+    <result column="loginname" property="loginname" jdbcType="NVARCHAR" />
+    <result column="login_start" property="loginstart" jdbcType="TIMESTAMP" />
+    <result column="login_end" property="loginend" jdbcType="TIMESTAMP" />
+    <result column="logintype" property="logintype" jdbcType="NVARCHAR" />
+    <result column="ip" property="ip" jdbcType="NVARCHAR" />
+    <result column="descinfo" property="descinfo" jdbcType="NVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    logid, loginname, login_start, login_end, logintype, ip, descinfo
+  </sql>
+  <select id="selectByParameters" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select 
+    <if test="check != null and check != ''">
+    	top 1 
+    </if>
+    <include refid="Base_Column_List" />
+    from loginlog
+    <where>
+    	<trim suffixOverrides="AND | OR" prefix="1=1">
+			<if test="loginname != null and loginname != ''">
+				AND loginname = #{loginname,jdbcType=NVARCHAR}
+			</if>
+    	</trim>
+    </where>
+    <if test="check != null and check != ''">
+    	<trim prefix="Order By">
+			login_start DESC
+    	</trim>
+    </if>
+  </select>
+  <select id="selectByID" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from loginlog
+    where logid = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByID" parameterType="java.lang.Integer" >
+    delete from loginlog
+    where logid = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insertSelective" parameterType="pha.com.code.log.login.model.LoginLog" >
+    insert into loginlog
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="logid != null" >
+        logid,
+      </if>
+      <if test="loginname != null" >
+        loginname,
+      </if>
+      <if test="loginstart != null" >
+        login_start,
+      </if>
+      <if test="loginend != null" >
+        login_end,
+      </if>
+      <if test="logintype != null" >
+        logintype,
+      </if>
+      <if test="ip != null" >
+        ip,
+      </if>
+      <if test="descinfo != null" >
+        descinfo,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="logid != null" >
+        #{logid,jdbcType=INTEGER},
+      </if>
+      <if test="loginname != null" >
+        #{loginname,jdbcType=NVARCHAR},
+      </if>
+      <if test="loginstart != null" >
+      	CONVERT(CHAR(19), #{loginstart,jdbcType=TIMESTAMP}, 20),
+      </if>
+      <if test="loginend != null" >
+        CONVERT(CHAR(19), #{loginend,jdbcType=TIMESTAMP}, 20),
+      </if>
+      <if test="logintype != null" >
+        #{logintype,jdbcType=NVARCHAR},
+      </if>
+      <if test="ip != null" >
+        #{ip,jdbcType=NVARCHAR},
+      </if>
+      <if test="descinfo != null" >
+        #{descinfo,jdbcType=NVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByIDSelective" parameterType="pha.com.code.log.login.model.LoginLog" >
+    update loginlog
+    <set >
+      <if test="loginname != null" >
+        loginname = #{loginname,jdbcType=NVARCHAR},
+      </if>
+      <if test="loginstart != null" >
+        login_start = CONVERT(CHAR(19), #{loginstart,jdbcType=TIMESTAMP}, 20),
+      </if>
+      <if test="loginend != null" >
+        login_end = CONVERT(CHAR(19), #{loginend,jdbcType=TIMESTAMP}, 20),
+      </if>
+      <if test="logintype != null" >
+        logintype = #{logintype,jdbcType=NVARCHAR},
+      </if>
+      <if test="ip != null" >
+        ip = #{ip,jdbcType=NVARCHAR},
+      </if>
+      <if test="descinfo != null" >
+        descinfo = #{descinfo,jdbcType=NVARCHAR},
+      </if>
+    </set>
+    where logid = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByNameSelective" parameterType="pha.com.code.log.login.model.LoginLog" >
+    update loginlog
+    <set >
+      <if test="loginend != null" >
+        login_end = CONVERT(CHAR(19), #{loginend,jdbcType=TIMESTAMP}, 20),
+      </if>
+      <if test="logintype != null" >
+        logintype = #{logintype,jdbcType=NVARCHAR},
+      </if>
+      <if test="ip != null" >
+        ip = #{ip,jdbcType=NVARCHAR},
+      </if>
+      <if test="descinfo != null" >
+        descinfo = #{descinfo,jdbcType=NVARCHAR},
+      </if>
+    </set>
+    where loginname = #{loginname,jdbcType=NVARCHAR} AND CONVERT(CHAR(19), login_start, 20) = CONVERT(CHAR(19), #{loginstart,jdbcType=TIMESTAMP}, 20)
+  </update>
+</mapper>

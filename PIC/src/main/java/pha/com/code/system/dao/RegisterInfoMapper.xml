@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="pha.com.code.system.dao.RegisterInfoMapper" >
+  <resultMap id="BaseResultMap" type="pha.com.code.system.model.RegisterInfo" >
+    <id column="registerid" property="registerid" jdbcType="INTEGER" />
+    <result column="username" property="username" jdbcType="NVARCHAR" />
+    <result column="name" property="name" jdbcType="NVARCHAR" />
+    <result column="mobile" property="mobile" jdbcType="NVARCHAR" />
+    <result column="password" property="password" jdbcType="NVARCHAR" />
+    <result column="company" property="company" jdbcType="NVARCHAR" />
+    <result column="registertype" property="registertype" jdbcType="INTEGER" />
+    <result column="registerdate" property="registerdate" jdbcType="TIMESTAMP" />
+    <result column="updatedate" property="updatedate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    registerid, username, name, mobile, password, company, registertype, registerdate, updatedate
+  </sql>
+  <select id="findUserByMobile" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from registerinfo
+    <where>
+    	mobile = #{mobile,jdbcType=NVARCHAR}
+    </where>
+  </select>
+  <select id="selectByID" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from registerinfo
+    where registerid = #{registerid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByID" parameterType="java.lang.Integer" >
+    delete from registerinfo
+    where registerid = #{registerid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insertSelective" parameterType="pha.com.code.system.model.RegisterInfo" >
+    insert into registerinfo
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="registerid != null" >
+        registerid,
+      </if>
+      <if test="username != null" >
+        username,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="mobile != null" >
+        mobile,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="company != null" >
+        company,
+      </if>
+      <if test="registertype != null" >
+        registertype,
+      </if>
+      <if test="registerdate != null" >
+        registerdate,
+      </if>
+      <if test="updatedate != null" >
+        updatedate,
+      </if>
+      
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="registerid != null" >
+        #{registerid,jdbcType=INTEGER},
+      </if>
+      <if test="username != null" >
+        #{username,jdbcType=NVARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=NVARCHAR},
+      </if>
+      <if test="mobile != null" >
+        #{mobile,jdbcType=NVARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=NVARCHAR},
+      </if>
+      <if test="company != null" >
+        #{company,jdbcType=NVARCHAR},
+      </if>
+      <if test="registertype != null" >
+        #{registertype,jdbcType=INTEGER},
+      </if>
+      <if test="registerdate != null" >
+        #{registerdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedate != null" >
+        #{updatedate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByIDSelective" parameterType="pha.com.code.system.model.RegisterInfo" >
+    update registerinfo
+    <set >
+      <if test="username != null" >
+        username = #{username,jdbcType=NVARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=NVARCHAR},
+      </if>
+      <if test="mobile != null" >
+        mobile = #{mobile,jdbcType=NVARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=NVARCHAR},
+      </if>
+      <if test="company != null" >
+        company = #{company,jdbcType=NVARCHAR},
+      </if>
+      <if test="registertype != null" >
+        registertype = #{registertype,jdbcType=INTEGER},
+      </if>
+      <if test="registerdate != null" >
+        registerdate = #{registerdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedate != null" >
+        updatedate = #{updatedate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where registerid = #{registerid,jdbcType=INTEGER}
+  </update>
+</mapper>

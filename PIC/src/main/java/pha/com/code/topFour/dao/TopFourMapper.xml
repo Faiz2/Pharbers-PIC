@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="pha.com.code.topFour.dao.TopFourMapper">
+	<resultMap id="BaseResultMap" type="pha.com.code.topFour.model.TopFour">
+		<result column="guim" property="guim" jdbcType="DECIMAL" />
+		<result column="zengzl" property="zengzl" jdbcType="DECIMAL" />
+		<result column="fene" property="fene" jdbcType="DECIMAL" />
+		<result column="chanps" property="chanps" jdbcType="DECIMAL" />
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		guim, zengzl, fene, chanps
+	</sql>
+
+	<cache type="org.mybatis.caches.ehcache.LoggingEhcache"/> 
+	
+	<sql id="Base_Column_Parameter">
+		<if test="manuid != null and manuid != ''">
+			AND a.manuid = #{manuid,jdbcType=INTEGER}
+		</if>
+		<if test="manutypeid != null and manutypeid != ''">
+			AND a.manutypeid = #{manutypeid,jdbcType=INTEGER}
+		</if>
+		<if test="provinceid != null and provinceid != ''">
+			AND a.provinceid = #{provinceid,jdbcType=INTEGER}
+		</if>
+		
+		<if test="dosageformid != null and dosageformid != ''">
+			AND a.dosageformid = #{dosageformid,jdbcType=INTEGER}
+		</if>
+		<if test="specificationsid != null and specificationsid != ''">
+			AND a.specificationsid = #{specificationsid,jdbcType=INTEGER}
+		</if>
+		<if test="packagingid != null and yepackagingidar != ''">
+			AND a.packagingid = #{packagingid,jdbcType=INTEGER}
+		</if>
+		<if test="minimumunitid != null and minimumunitid != ''">
+			AND a.minimum_unit_id = #{minimumunitid,jdbcType=INTEGER}
+		</if>
+	</sql>
+
+	<!-- 计算增长率主方法(年）计算累计销售增长率 -->
+	<select id="selectByParameters" resultMap="BaseResultMap" parameterType="java.util.Map">
+		with tempTb1 as (
+			select isnull(SUM(a.sales_value),0) guim FROM medicalsalesdata a
+				 left join manufacturertypeinfo c on a.manutypeid = c.manutypeid
+				 left join manufacturerinfo d on a.manuid = d.manuid
+				 left join province e on a.proviceid = e.provinceid
+				 left join productnameinfo f on a.productnameid = f.productnameid
+				 left join dosageforminfo g on a.dosageformid = g.dosageformid
+				 left join specificationsinfo h on a.specificationsid = h.specificationsid
+				 left join packaginginfo i on a.packagingid = i.packagingid
+				 left join minimumunit j on a.minimumunitid = j.minimum_unit_id
+				 left join genericnameinfo k on a.genericnameid = k.genericnameid
+				 left join internationalatc1info l on a.interatc1id = l.interatc1id
+				 left join internationalatc2info m on a.interatc2id = m.interatc2id
+				 left join internationalatc3info n on a.interatc3id = n.interatc3id
+				 <where>
+				 	<trim suffixOverrides="AND | OR">
+				 		<if test="timeEnd0 != null and timeEnd0 != ''">
+							AND a.sales_year BETWEEN #{timeBegin0,jdbcType=NVARCHAR} 
+							AND #{timeEnd0,jdbcType=NVARCHAR}
+						</if>
+						<if test="codeid != null and codeid != ''">
+							<choose>
+								<when test="atcType != null and atcType == 1">
+									AND l.interatc1id = #{codeid,jdbcType=INTEGER}
+								</when>
+								<when test="atcType != null and atcType == 2">
+									AND m.interatc2id = #{codeid,jdbcType=INTEGER}
+								</when>
+								<when test="atcType != null and atcType == 3">
+									AND n.interatc3id = #{codeid,jdbcType=INTEGER}
+								</when>
+								<when test="atcType != null and atcType == 4">
+									AND k.genericnameid = #{codeid,jdbcType=INTEGER}
+								</when>
+								<when test="atcType != null and atcType == 5">
+									AND f.productnameid = #{productnameid,jdbcType=INTEGER}
+								</when>
+							</choose>
+						</if>
+<!-- 				 		<include refid="Base_Column_Parameter"/> -->
+				 	</trim>
+				 </where>
+			),tempTb2 as(
+				select ((avalue-bvalue)/bvalue)*100 zengzl from (
+					select (
+						select isnull(SUM(a.sales_value),0) valuea
+							FROM medicalsalesdata a
+							 left join manufacturertypeinfo c on a.manutypeid = c.manutypeid
+							 left join manufacturerinfo d on a.manuid = d.manuid
+							 left join province e on a.proviceid = e.provinceid
+							 left join productnameinfo f on a.productnameid = f.productnameid
+							 left join dosageforminfo g on a.dosageformid = g.dosageformid
+							 left join specificationsinfo h on a.specificationsid = h.specificationsid
+							 left join packaginginfo i on a.packagingid = i.packagingid
+							 left join minimumunit j on a.minimumunitid = j.minimum_unit_id
+							 left join genericnameinfo k on a.genericnameid = k.genericnameid
+							 left join internationalatc1info l on a.interatc1id = l.interatc1id
+							 left join internationalatc2info m on a.interatc2id = m.interatc2id
+							 left join internationalatc3info n on a.interatc3id = n.interatc3id
+							<where>
+							 	<trim suffixOverrides="AND | OR">
+							 		<if test="timeEnd1 != null and timeEnd1 != ''">
+										AND a.sales_year BETWEEN #{timeBegin0,jdbcType=NVARCHAR} 
+										AND #{timeEnd0,jdbcType=NVARCHAR}
+									</if>
+									<if test="codeid != null and codeid != ''">
+										<choose>
+											<when test="atcType != null and atcType == 1">
+												AND l.interatc1id = #{codeid,jdbcType=INTEGER}
+											</when>
+											<when test="atcType != null and atcType == 2">
+												AND m.interatc2id = #{codeid,jdbcType=INTEGER}
+											</when>
+											<when test="atcType != null and atcType == 3">
+												AND n.interatc3id = #{codeid,jdbcType=INTEGER}
+											</when>
+											<when test="atcType != null and atcType == 4">
+												AND k.genericnameid = #{codeid,jdbcType=INTEGER}
+											</when>
+											<when test="atcType != null and atcType == 5">
+												AND f.productnameid = #{productnameid,jdbcType=INTEGER}
+											</when>
+										</choose>
+									</if>
+<!-- 							 		<include refid="Base_Column_Parameter"/> -->
+							 	</trim>
+							 </where>
+						) avalue,(
+							select isnull(SUM(a.sales_value),0) valueb
+								FROM medicalsalesdata a
+								 left join manufacturertypeinfo c on a.manutypeid = c.manutypeid
+								 left join manufacturerinfo d on a.manuid = d.manuid
+								 left join province e on a.proviceid = e.provinceid
+								 left join productnameinfo f on a.productnameid = f.productnameid
+								 left join dosageforminfo g on a.dosageformid = g.dosageformid
+								 left join specificationsinfo h on a.specificationsid = h.specificationsid
+								 left join packaginginfo i on a.packagingid = i.packagingid
+								 left join minimumunit j on a.minimumunitid = j.minimum_unit_id
+								 left join genericnameinfo k on a.genericnameid = k.genericnameid
+								 left join internationalatc1info l on a.interatc1id = l.interatc1id
+								 left join internationalatc2info m on a.interatc2id = m.interatc2id
+								 left join internationalatc3info n on a.interatc3id = n.interatc3id
+								<where>
+								 	<trim suffixOverrides="AND | OR">
+								 		<if test="timeEnd1 != null and timeEnd1 != ''">
+											AND a.sales_year BETWEEN #{timeBegin1,jdbcType=NVARCHAR} 
+											AND #{timeEnd1,jdbcType=NVARCHAR}
+										</if>
+										<if test="codeid != null and codeid != ''">
+											<choose>
+												<when test="atcType != null and atcType == 1">
+													AND l.interatc1id = #{codeid,jdbcType=INTEGER}
+												</when>
+												<when test="atcType != null and atcType == 2">
+													AND m.interatc2id = #{codeid,jdbcType=INTEGER}
+												</when>
+												<when test="atcType != null and atcType == 3">
+													AND n.interatc3id = #{codeid,jdbcType=INTEGER}
+												</when>
+												<when test="atcType != null and atcType == 4">
+													AND k.genericnameid = #{codeid,jdbcType=INTEGER}
+												</when>
+												<when test="atcType != null and atcType == 5">
+													AND f.productnameid = #{productnameid,jdbcType=INTEGER}
+												</when>
+											</choose>
+										</if>
+<!-- 								 		<include refid="Base_Column_Parameter"/> -->
+								 	</trim>
+								</where>
+						) bvalue
+					) temp
+			),tempTb3 as (
+				select (dvalue/cvalue)*100 fene from (
+					select (
+						select isnull(SUM(a.sales_value),0) valuea
+							FROM medicalsalesdata a
+							 left join manufacturertypeinfo c on a.manutypeid = c.manutypeid
+							 left join manufacturerinfo d on a.manuid = d.manuid
+							 left join province e on a.proviceid = e.provinceid
+							 left join productnameinfo f on a.productnameid = f.productnameid
+							 left join dosageforminfo g on a.dosageformid = g.dosageformid
+							 left join specificationsinfo h on a.specificationsid = h.specificationsid
+							 left join packaginginfo i on a.packagingid = i.packagingid
+							 left join minimumunit j on a.minimumunitid = j.minimum_unit_id
+							 left join genericnameinfo k on a.genericnameid = k.genericnameid
+							 left join internationalatc1info l on a.interatc1id = l.interatc1id
+							 left join internationalatc2info m on a.interatc2id = m.interatc2id
+							 left join internationalatc3info n on a.interatc3id = n.interatc3id
+							 <where>
+							 	<trim suffixOverrides="AND | OR">
+							 		<if test="timeEnd0 != null and timeEnd0 != ''">
+										AND a.sales_year BETWEEN #{timeBegin0,jdbcType=NVARCHAR} 
+										AND #{timeEnd0,jdbcType=NVARCHAR}
+									</if>
+									<if test="code != null and code != ''">
+										<choose>
+											<!-- <when test="atcType != null and atcType == 2">
+												AND l.interatc1name = #{code,jdbcType=NVARCHAR}
+											</when>
+											<when test="atcType != null and atcType == 3">
+												AND m.interatc2name = #{code,jdbcType=NVARCHAR}
+											</when> -->
+											<when test="atcType != null and atcType == 4">
+												AND n.interatc3name = #{code,jdbcType=NVARCHAR}
+											</when>
+											<when test="productType != null and productType == 5">
+												AND k.parentcode = #{code,jdbcType=NVARCHAR}
+											</when>
+										</choose>
+									</if>
+<!-- 							 		<include refid="Base_Column_Parameter"/> -->
+							 	</trim>
+							 </where>
+						) cvalue,(
+							select isnull(SUM(a.sales_value),0) valueb
+								FROM medicalsalesdata a
+								 left join manufacturertypeinfo c on a.manutypeid = c.manutypeid
+								 left join manufacturerinfo d on a.manuid = d.manuid
+								 left join province e on a.proviceid = e.provinceid
+								 left join productnameinfo f on a.productnameid = f.productnameid
+								 left join dosageforminfo g on a.dosageformid = g.dosageformid
+								 left join specificationsinfo h on a.specificationsid = h.specificationsid
+								 left join packaginginfo i on a.packagingid = i.packagingid
+								 left join minimumunit j on a.minimumunitid = j.minimum_unit_id
+								 left join genericnameinfo k on a.genericnameid = k.genericnameid
+								 left join internationalatc1info l on a.interatc1id = l.interatc1id
+								 left join internationalatc2info m on a.interatc2id = m.interatc2id
+								 left join internationalatc3info n on a.interatc3id = n.interatc3id
+								 <where>
+								 	<trim suffixOverrides="AND | OR">
+								 		<if test="timeEnd0 != null and timeEnd0 != ''">
+											AND a.sales_year BETWEEN #{timeBegin0,jdbcType=NVARCHAR} 
+											AND #{timeEnd0,jdbcType=NVARCHAR}
+										</if>
+										<if test="codeid != null and codeid != ''">
+											<choose>
+												<!-- <when test="atcType != null and atcType == 2">
+													AND m.interatc2id = #{codeid,jdbcType=INTEGER}
+												</when>
+												<when test="atcType != null and atcType == 3">
+													AND n.interatc3id = #{codeid,jdbcType=INTEGER}
+												</when> -->
+												<when test="atcType != null and atcType == 4">
+													AND k.genericnameid = #{codeid,jdbcType=INTEGER}
+												</when>
+												<when test="productType != null and productType == 5">
+													AND f.productnameid = #{productnameid,jdbcType=INTEGER}
+												</when>
+											</choose>
+										</if>
+<!-- 								 		<include refid="Base_Column_Parameter"/> -->
+								 	</trim>
+								 </where>
+						) dvalue
+					) temp
+			),tempTb4 as (
+				select COUNT(1) chanps from(<!-- ,i.packagingname -->
+					select DISTINCT f.productname_ch,d.manuname_ch,g.dosageformname FROM medicalsalesdata a 
+						left join manufacturertypeinfo c on a.manutypeid = c.manutypeid 
+						left join manufacturerinfo d on a.manuid = d.manuid 
+						left join province e on a.proviceid = e.provinceid 
+						left join productnameinfo f on a.productnameid = f.productnameid 
+						left join dosageforminfo g on a.dosageformid = g.dosageformid 
+						left join specificationsinfo h on a.specificationsid = h.specificationsid 
+						left join packaginginfo i on a.packagingid = i.packagingid 
+						left join minimumunit j on a.minimumunitid = j.minimum_unit_id 
+						left join genericnameinfo k on a.genericnameid = k.genericnameid 
+						left join internationalatc1info l on a.interatc1id = l.interatc1id 
+						left join internationalatc2info m on a.interatc2id = m.interatc2id 
+						left join internationalatc3info n on a.interatc3id = n.interatc3id
+						<where>
+						 	<trim suffixOverrides="AND | OR">
+						 		<if test="timeEnd0 != null and timeEnd0 != ''">
+									AND a.sales_year BETWEEN #{timeBegin0,jdbcType=NVARCHAR} 
+									AND #{timeEnd0,jdbcType=NVARCHAR}
+								</if>
+						 		<if test="codeid != null and codeid != ''">
+									<choose>
+										<when test="atcType != null and atcType == 1">
+											AND l.interatc1id = #{codeid,jdbcType=INTEGER}
+										</when>
+										<when test="atcType != null and atcType == 2">
+											AND m.interatc2id = #{codeid,jdbcType=INTEGER}
+										</when>
+										<when test="atcType != null and atcType == 3">
+											AND n.interatc3id = #{codeid,jdbcType=INTEGER}
+										</when>
+										<when test="atcType != null and atcType == 4">
+											AND k.genericnameid = #{codeid,jdbcType=INTEGER}
+										</when>
+										<when test="atcType != null and atcType == 5">
+											AND f.productnameid = #{productnameid,jdbcType=INTEGER}
+										</when>
+									</choose>
+								</if>
+						 	</trim>
+						 </where>
+				) temp
+			)
+			select guim, Convert(decimal(18,2),zengzl)zengzl,Convert(decimal(18,2),fene)fene,chanps from tempTb1,tempTb2,tempTb3,tempTb4
+	</select>
+</mapper>
